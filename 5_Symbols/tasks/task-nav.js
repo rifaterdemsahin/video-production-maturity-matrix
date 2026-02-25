@@ -809,6 +809,10 @@ function renderTaskPage(taskId) {
       <div class="nav-brand">🎬 VPMM</div>
       <div class="nav-links">
         <a href="../../index.html">🏠 Home</a>
+        <a href="../maturity_matrix.html">📊 Maturity Matrix</a>
+        <a href="../../aigent.md">🤖 Agent Rules</a>
+        <a href="../../kilocode.md">💻 KiloCode Rules</a>
+        <a href="../../markdown_renderer.html">📝 Markdown Renderer</a>
         <a href="../../1_Real_Unknown/">1_Real</a>
         <a href="../../2_Environment/">2_Environment</a>
         <a href="../../3_Simulation/">3_Simulation</a>
