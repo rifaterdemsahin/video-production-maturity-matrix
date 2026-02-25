@@ -313,6 +313,7 @@
       <div style="width: 100%; max-width: 400px; margin: 0 auto; background: var(--surface2); border-radius: 10px; height: 20px; overflow: hidden;">
         <div id="progress-bar" style="height: 100%; background: linear-gradient(90deg, var(--accent), var(--success)); width: 0%; transition: width 0.3s;"></div>
       </div>
+      <button onclick="downloadYAML()" style="margin-top: 1rem; padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer;">📥 Download YAML Status</button>
     </div>
   </section>
 
@@ -541,6 +542,26 @@
     function loadTheme() {
       const theme = getCookie('theme') || 'dark';
       setTheme(theme);
+    }
+    function downloadYAML() {
+      let yaml = 'weekly_schedule_status:\n';
+      const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      days.forEach((day, i) => {
+        yaml += `  ${dayNames[i].toLowerCase()}:\n`;
+        const inputs = document.querySelectorAll(`input[id^="${day}"]`);
+        inputs.forEach(input => {
+          const label = document.querySelector(`label[for="${input.id}"]`).textContent.replace(/[^\w\s]/g, '').trim().toLowerCase().replace(/\s+/g, '_');
+          yaml += `    - ${label}: ${input.checked}\n`;
+        });
+      });
+      const blob = new Blob([yaml], {type: 'text/yaml'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'weekly_schedule_status.yaml';
+      a.click();
+      URL.revokeObjectURL(url);
     }
     document.addEventListener('change', (e) => {
       if (e.target.type === 'checkbox') {
