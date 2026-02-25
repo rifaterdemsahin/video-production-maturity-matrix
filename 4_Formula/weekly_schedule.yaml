@@ -1,0 +1,92 @@
+weekly_schedule_status:
+  sunday:
+    sun1:
+      description: "✏️ Brainstorm topic and core thesis statement on pen and paper 📄"
+      completed: true
+    sun2:
+      description: "🤖 Give handwritten notes to mobile GPT to rewrite as professional script 📄"
+      completed: true
+    sun3:
+      description: "📝 Outline video structure (intro, body, conclusion) 📄"
+      completed: true
+    sun4:
+      description: "📜 Write full script with timestamps and visuals notes 📄"
+      completed: true
+  monday:
+    mon1:
+      description: "🕔 Wake up at 5 AM and prepare for shooting 🌅 📄"
+      completed: true
+    mon2:
+      description: "📜 Load script into Elgato prompter for teleprompter 🎥 📄"
+      completed: true
+    mon3:
+      description: "🎤 Shoot talking head footage with post-production plan in mind 📹 📄"
+      completed: true
+    mon4:
+      description: "🖥️ Capture screen recordings for demos 📸 📄"
+      completed: true
+    mon5:
+      description: "☁️ Upload raw footage to Google Drive 📁 📄"
+      completed: true
+    mon6:
+      description: "📓 Create Obsidian notes for the session 🗒️ 📄"
+      completed: true
+  tuesday:
+    tue1:
+      description: "🎬 Import footage into DaVinci Resolve 📥 📄"
+      completed: true
+    tue2:
+      description: "📋 Clone DaVinci Resolve master template 🔄 📄"
+      completed: true
+    tue3:
+      description: "🗣️ Place audio track and sync to script 🎵 📄"
+      completed: true
+    tue4:
+      description: "🖼️ Place screencaptures as A-roll with precise timings ⏱️ 📄"
+      completed: true
+  wednesday:
+    wed1:
+      description: "📜 Take merged script output and break into scenes ✂️ 📄"
+      completed: true
+    wed2:
+      description: "🎭 Create sentences and inputs for Remotion animation 📝 📄"
+      completed: true
+    wed3:
+      description: "💻 Update code to generate DaVinci Resolve deliverables for 16-second scenes 🎞️ 📄"
+      completed: true
+  thursday:
+    thu1:
+      description: "🖌️ Use fal.ai and Remotion for content generation 🤖 📄"
+      completed: false
+    thu2:
+      description: "🎬 Generate script-based mini edits for all exported footage ✨ 📄"
+      completed: false
+    thu3:
+      description: "🎞️ Create B-roll elements and overlays automatically 🖼️ 📄"
+      completed: false
+  friday:
+    fri1:
+      description: "📂 Place assets to timeline by sorting filenames 🔤 📄"
+      completed: false
+    fri2:
+      description: "🎵 Normalize audio levels and balance ⚖️ 📄"
+      completed: false
+    fri3:
+      description: "📑 Add chapter markers and subtitles 💬 📄"
+      completed: false
+  saturday:
+    sat1:
+      description: "📤 Export final video in all formats 🎥 📄"
+      completed: false
+    sat2:
+      description: "📺 Upload to YouTube and platforms ☁️ 📄"
+      completed: false
+    sat3:
+      description: "✍️ Write title, description, tags 🏷️ 📄"
+      completed: false
+    sat4:
+      description: "🖼️ Create and upload thumbnail ⬆️ 📄"
+      completed: false
+    sat5:
+      description: "📅 Schedule post and promote 📣 📄"
+      completed: false
