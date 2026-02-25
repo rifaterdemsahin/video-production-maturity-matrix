@@ -1,0 +1,35 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Build
+dist/
+build/
+.cache/
+
+# Qdrant data
+qdrant_storage/
+
+# Logs
+*.log
+logs/
+
+# Obsolete (tracked for history, but excluded from build)
+**/_obsolete/

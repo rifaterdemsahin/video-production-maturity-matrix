@@ -1,0 +1,438 @@
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot; /&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot; /&gt;
+  &lt;title&gt;📅 5 Symbols - Content Production Sprint&lt;/title&gt;
+  &lt;meta name=&quot;description&quot; content=&quot;Weekly checklist for video production sprint. Track progress from script to publish.&quot; /&gt;
+  &lt;style&gt;
+    :root {
+      --bg: #0f0f0f;
+      --surface: #1a1a2e;
+      --surface2: #16213e;
+      --accent: #e94560;
+      --accent2: #0f3460;
+      --text: #e0e0e0;
+      --text-muted: #888;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --info: #2196f3;
+      --nav-h: 60px;
+      --radius: 10px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+      --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    /* TOP NAV - copied from root */
+    #top-nav {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: rgba(26,26,46,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(233,69,96,0.3);
+      z-index: 1000;
+      align-items: center;
+      padding: 0 16px;
+      gap: 6px;
+      flex-wrap: nowrap;
+    }
+    #top-nav.visible { display: flex; }
+    .nav-brand {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      align-items: center;
+      flex: 1;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--text); background: rgba(233,69,96,0.15); }
+    .nav-links a.active { color: var(--accent); background: rgba(233,69,96,0.1); }
+    #debug-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(233,69,96,0.15);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 50px;
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      z-index: 2000;
+      transition: all 0.2s;
+      backdrop-filter: blur(6px);
+    }
+    #debug-btn:hover { background: var(--accent); color: white; }
+    /* Sprint styles */
+    .hero {
+      padding: 100px 20px 60px;
+      text-align: center;
+      background: radial-gradient(ellipse at 50% 0%, rgba(233,69,96,0.12) 0%, transparent 70%);
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 3rem;
+    }
+    .day-section {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 28px;
+      border: 1px solid rgba(255,255,255,0.07);
+      margin: 24px auto;
+      max-width: 800px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .day-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+    .day-section:hover::before { transform: scaleX(1); }
+    .day-section:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+      border-color: rgba(233,69,96,0.3);
+    }
+    .day-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+    .day-name {
+      flex: 1;
+      color: var(--text);
+    }
+    .day-theme {
+      color: var(--accent);
+      font-weight: 500;
+      font-size: 1rem;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      font-size: 0.85rem;
+    }
+    .reset-btn {
+      background: transparent;
+      border: 1px solid var(--warning);
+      color: var(--warning);
+    }
+    .reset-btn:hover {
+      background: var(--warning);
+      color: white;
+      transform: translateY(-1px);
+    }
+    .reset-week {
+      background: var(--success);
+      color: white;
+      padding: 12px 28px;
+      font-size: 1rem;
+      border-radius: 50px;
+      display: block;
+      margin: 3rem auto 2rem;
+      max-width: 300px;
+    }
+    .reset-week:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+    }
+    .actions {
+      list-style: none;
+      padding: 0;
+    }
+    .action-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 16px 0;
+      padding: 16px;
+      background: var(--surface2);
+      border-radius: 8px;
+      border-left: 4px solid var(--accent);
+      transition: all 0.2s;
+    }
+    .action-item:hover {
+      border-left-color: #ff6b9f;
+      box-shadow: 0 4px 12px rgba(233,69,96,0.15);
+    }
+    .action-item input[type=&quot;checkbox&quot;] {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .action-item label {
+      flex: 1;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .action-item input[type=&quot;checkbox&quot;]:checked + label {
+      text-decoration: line-through;
+      opacity: 0.7;
+      color: var(--text-muted);
+    }
+    .thesis { border-left-color: #ffd700; }
+    .thesis .action-item { border-left-color: #ffd700; }
+    .thesis .action-item:hover { border-left-color: #ffed4a; }
+    .antithesis { border-left-color: #ff6b6b; }
+    .antithesis .action-item { border-left-color: #ff6b6b; }
+    .antithesis .action-item:hover { border-left-color: #ff8a8a; }
+    .synthesis { border-left-color: #51cf66; }
+    .synthesis .action-item { border-left-color: #51cf66; }
+    .synthesis .action-item:hover { border-left-color: #70d77f; }
+    .generate { border-left-color: #9f7aea; }
+    .generate .action-item { border-left-color: #9f7aea; }
+    .generate .action-item:hover { border-left-color: #b794eb; }
+    .assets { border-left-color: #ed8936; }
+    .assets .action-item { border-left-color: #ed8936; }
+    .assets .action-item:hover { border-left-color: #f6a95a; }
+    .publish { border-left-color: #48bb78; }
+    .publish .action-item { border-left-color: #48bb78; }
+    .publish .action-item:hover { border-left-color: #68d39a; }
+    @media (max-width: 640px) {
+      .day-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .day-section { margin: 16px; padding: 20px; }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;!-- TOP NAV --&gt;
+  &lt;nav id=&quot;top-nav&quot;&gt;
+    &lt;div class=&quot;nav-brand&quot;&gt;🎬 VPMM&lt;/div&gt;
+    &lt;div class=&quot;nav-links&quot;&gt;
+      &lt;a href=&quot;../1_Real_Unknown/&quot; data-path=&quot;1_Real_Unknown&quot;&gt;1_Real&lt;/a&gt;
+      &lt;a href=&quot;../2_Environment/&quot; data-path=&quot;2_Environment&quot;&gt;2_Environment&lt;/a&gt;
+      &lt;a href=&quot;../3_Simulation/&quot; data-path=&quot;3_Simulation&quot;&gt;3_Simulation&lt;/a&gt;
+      &lt;a href=&quot;../4_Formula/&quot; data-path=&quot;4_Formula&quot;&gt;4_Formula&lt;/a&gt;
+      &lt;a href=&quot;./&quot; data-path=&quot;5_Symbols&quot; class=&quot;active&quot;&gt;5_Symbols&lt;/a&gt;
+      &lt;a href=&quot;../6_Semblance/&quot; data-path=&quot;6_Semblance&quot;&gt;6_Semblance&lt;/a&gt;
+      &lt;a href=&quot;../7_Testing_Known/&quot; data-path=&quot;7_Testing&quot;&gt;7_Testing&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/nav&gt;
+
+  &lt;button id=&quot;debug-btn&quot; onclick=&quot;toggleDebug()&quot; title=&quot;Toggle Navigation&quot;&gt;⚙️ Debug&lt;/button&gt;
+
+  &lt;section class=&quot;hero&quot;&gt;
+    &lt;h1&gt;📅 Content Production Sprint&lt;/h1&gt;
+    &lt;p&gt;Thesis → Antithesis → Synthesis: Weekly checklist to produce one high-quality video every week.&lt;/p&gt;
+  &lt;/section&gt;
+
+  &lt;main style=&quot;max-width: 900px; margin: 0 auto; padding: 0 20px;&quot;&gt;
+    &lt;section class=&quot;day-section thesis&quot;&gt;
+      &lt;div class=&quot;day-header&quot;&gt;
+        &lt;span class=&quot;day-name&quot;&gt;Sunday&lt;/span&gt;
+        &lt;span class=&quot;day-theme&quot;&gt;Write the script (Thesis) ✍️📜&lt;/span&gt;
+        &lt;button class=&quot;btn reset-btn&quot; onclick=&quot;resetDay('sun')&quot;&gt;Reset&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;ul class=&quot;actions&quot;&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sun1&quot;&gt;&lt;label for=&quot;sun1&quot;&gt;Brainstorm topic and core thesis statement&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sun2&quot;&gt;&lt;label for=&quot;sun2&quot;&gt;Outline video structure (intro, body, conclusion)&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sun3&quot;&gt;&lt;label for=&quot;sun3&quot;&gt;Write full script with timestamps and visuals notes&lt;/label&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;day-section antithesis&quot;&gt;
+      &lt;div class=&quot;day-header&quot;&gt;
+        &lt;span class=&quot;day-name&quot;&gt;Monday&lt;/span&gt;
+        &lt;span class=&quot;day-theme&quot;&gt;Shoot footage &amp;amp; screen captures (Antithesis) 📸🖥️&lt;/span&gt;
+        &lt;button class=&quot;btn reset-btn&quot; onclick=&quot;resetDay('mon')&quot;&gt;Reset&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;ul class=&quot;actions&quot;&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mon1&quot;&gt;&lt;label for=&quot;mon1&quot;&gt;Prepare shot list from script&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mon2&quot;&gt;&lt;label for=&quot;mon2&quot;&gt;Record talking head footage (multiple takes)&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mon3&quot;&gt;&lt;label for=&quot;mon3&quot;&gt;Capture screen recordings for demos&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;mon4&quot;&gt;&lt;label for=&quot;mon4&quot;&gt;Organize raw footage in folders&lt;/label&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;day-section synthesis&quot;&gt;
+      &lt;div class=&quot;day-header&quot;&gt;
+        &lt;span class=&quot;day-name&quot;&gt;Tuesday&lt;/span&gt;
+        &lt;span class=&quot;day-theme&quot;&gt;Create timeline &amp;amp; merge takes (Synthesis) 🎬🧬&lt;/span&gt;
+        &lt;button class=&quot;btn reset-btn&quot; onclick=&quot;resetDay('tue')&quot;&gt;Reset&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;ul class=&quot;actions&quot;&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;tue1&quot;&gt;&lt;label for=&quot;tue1&quot;&gt;Import all footage into editor&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;tue2&quot;&gt;&lt;label for=&quot;tue2&quot;&gt;Select best takes and sync to script timeline&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;tue3&quot;&gt;&lt;label for=&quot;tue3&quot;&gt;Rough cut: trim and arrange scenes&lt;/label&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;day-section generate&quot;&gt;
+      &lt;div class=&quot;day-header&quot;&gt;
+        &lt;span class=&quot;day-name&quot;&gt;Wednesday&lt;/span&gt;
+        &lt;span class=&quot;day-theme&quot;&gt;Bulk generate code updates for scenes 🎨🖼️&lt;/span&gt;
+        &lt;button class=&quot;btn reset-btn&quot; onclick=&quot;resetDay('wed')&quot;&gt;Reset&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;ul class=&quot;actions&quot;&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;wed1&quot;&gt;&lt;label for=&quot;wed1&quot;&gt;Identify scenes needing code visuals&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;wed2&quot;&gt;&lt;label for=&quot;wed2&quot;&gt;Generate/update code snippets for each scene&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;wed3&quot;&gt;&lt;label for=&quot;wed3&quot;&gt;Record new screen captures if needed&lt;/label&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;day-section generate&quot;&gt;
+      &lt;div class=&quot;day-header&quot;&gt;
+        &lt;span class=&quot;day-name&quot;&gt;Thursday&lt;/span&gt;
+        &lt;span class=&quot;day-theme&quot;&gt;Bulk generate backgrounds, graphics &amp;amp; animations ✨🎞️&lt;/span&gt;
+        &lt;button class=&quot;btn reset-btn&quot; onclick=&quot;resetDay('thu')&quot;&gt;Reset&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;ul class=&quot;actions&quot;&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;thu1&quot;&gt;&lt;label for=&quot;thu1&quot;&gt;Design/generate background graphics for scenes&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;thu2&quot;&gt;&lt;label for=&quot;thu2&quot;&gt;Create transitions and animations&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;thu3&quot;&gt;&lt;label for=&quot;thu3&quot;&gt;Generate B-roll elements and overlays&lt;/label&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;day-section assets&quot;&gt;
+      &lt;div class=&quot;day-header&quot;&gt;
+        &lt;span class=&quot;day-name&quot;&gt;Friday&lt;/span&gt;
+        &lt;span class=&quot;day-theme&quot;&gt;Place all artifacts and assets 🛠️📦&lt;/span&gt;
+        &lt;button class=&quot;btn reset-btn&quot; onclick=&quot;resetDay('fri')&quot;&gt;Reset&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;ul class=&quot;actions&quot;&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;fri1&quot;&gt;&lt;label for=&quot;fri1&quot;&gt;Import all graphics, code visuals, animations to timeline&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;fri2&quot;&gt;&lt;label for=&quot;fri2&quot;&gt;Position and layer assets correctly&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;fri3&quot;&gt;&lt;label for=&quot;fri3&quot;&gt;Add text overlays, captions if needed&lt;/label&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;section class=&quot;day-section publish&quot;&gt;
+      &lt;div class=&quot;day-header&quot;&gt;
+        &lt;span class=&quot;day-name&quot;&gt;Saturday&lt;/span&gt;
+        &lt;span class=&quot;day-theme&quot;&gt;Final cuts and publish 🚀🌐&lt;/span&gt;
+        &lt;button class=&quot;btn reset-btn&quot; onclick=&quot;resetDay('sat')&quot;&gt;Reset&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;ul class=&quot;actions&quot;&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sat1&quot;&gt;&lt;label for=&quot;sat1&quot;&gt;Fine-tune timing, audio levels, pacing&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sat2&quot;&gt;&lt;label for=&quot;sat2&quot;&gt;Export high-quality video&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sat3&quot;&gt;&lt;label for=&quot;sat3&quot;&gt;Upload to YouTube/other platforms&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sat4&quot;&gt;&lt;label for=&quot;sat4&quot;&gt;Write description, tags, thumbnail&lt;/label&gt;&lt;/li&gt;
+        &lt;li class=&quot;action-item&quot;&gt;&lt;input type=&quot;checkbox&quot; id=&quot;sat5&quot;&gt;&lt;label for=&quot;sat5&quot;&gt;Schedule post and promote&lt;/label&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/section&gt;
+
+    &lt;button class=&quot;reset-week&quot; onclick=&quot;resetWeek()&quot;&gt;🔄 Reset Entire Week&lt;/button&gt;
+  &lt;/main&gt;
+
+  &lt;footer style=&quot;text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.07); margin-top: 4rem;&quot;&gt;
+    &lt;p&gt;🎬 Part of Video Production Maturity Matrix | &lt;a href=&quot;../&quot; style=&quot;color: var(--accent);&quot;&gt;← Back to Home&lt;/a&gt;&lt;/p&gt;
+  &lt;/footer&gt;
+
+  &lt;script&gt;
+    // Debug nav toggle - copied from root
+    function getDebugState() {
+      return document.cookie.split(';').some(c =&gt; c.trim().startsWith('debug=true'));
+    }
+    function setDebugCookie(val) {
+      document.cookie = `debug=${val};path=/;max-age=${60*60*24*30}`;
+    }
+    function applyDebugState() {
+      const nav = document.getElementById('top-nav');
+      const btn = document.getElementById('debug-btn');
+      if (getDebugState()) {
+        nav.classList.add('visible');
+        document.body.style.paddingTop = '60px';
+        btn.textContent = '⚙️ Hide';
+      } else {
+        nav.classList.remove('visible');
+        document.body.style.paddingTop = '0';
+        btn.textContent = '⚙️ Debug';
+      }
+    }
+    function toggleDebug() {
+      setDebugCookie(!getDebugState());
+      applyDebugState();
+    }
+    // Init debug
+    applyDebugState();
+
+    // Checklist JS
+    function loadState() {
+      for (let i = 0; i &lt; localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key &amp;&amp; key.startsWith('sprint_')) {
+          const cb = document.getElementById(key);
+          if (cb) cb.checked = JSON.parse(localStorage.getItem(key));
+        }
+      }
+    }
+    function saveState(id, checked) {
+      localStorage.setItem('sprint_' + id, JSON.stringify(checked));
+    }
+    function resetDay(prefix) {
+      const inputs = document.querySelectorAll(`[id^=&quot;${prefix}&quot;]`);
+      inputs.forEach(input =&gt; {
+        input.checked = false;
+        saveState(input.id, false);
+      });
+    }
+    function resetWeek() {
+      if (confirm('Reset all checkboxes for the week?')) {
+        Object.keys(localStorage).forEach(key =&gt; {
+          if (key.startsWith('sprint_')) localStorage.removeItem(key);
+        });
+        location.reload();
+      }
+    }
+    document.addEventListener('change', (e) =&gt; {
+      if (e.target.type === 'checkbox') {
+        saveState(e.target.id, e.target.checked);
+      }
+    });
+    loadState();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
