@@ -269,6 +269,12 @@
   <section class="hero">
     <h1>📅 Content Production Sprint</h1>
     <p>Thesis → Antithesis → Synthesis: Weekly checklist to produce one high-quality video every week.</p>
+    <div id="progress-container" style="margin-top: 2rem; text-align: center;">
+      <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">📊 Sprint Progress: <span id="progress-percent">0%</span></div>
+      <div style="width: 100%; max-width: 400px; margin: 0 auto; background: var(--surface2); border-radius: 10px; height: 20px; overflow: hidden;">
+        <div id="progress-bar" style="height: 100%; background: linear-gradient(90deg, var(--accent), var(--success)); width: 0%; transition: width 0.3s;"></div>
+      </div>
+    </div>
   </section>
 
   <!-- CONTENT MENU -->
@@ -462,6 +468,7 @@
         input.checked = false;
         saveState(input.id, false);
       });
+      updateProgress();
     }
     function resetWeek() {
       if (confirm('Reset all checkboxes for the week?')) {
@@ -472,12 +479,22 @@
         location.reload();
       }
     }
+    function updateProgress() {
+      const inputs = document.querySelectorAll('input[type="checkbox"]');
+      const total = inputs.length;
+      const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+      const percent = Math.round((checked / total) * 100);
+      document.getElementById('progress-percent').textContent = percent + '%';
+      document.getElementById('progress-bar').style.width = percent + '%';
+    }
     document.addEventListener('change', (e) => {
       if (e.target.type === 'checkbox') {
         saveState(e.target.id, e.target.checked);
+        updateProgress();
       }
     });
     loadState();
+    updateProgress();
   </script>
 </body>
 </html>
