@@ -551,7 +551,10 @@
         yaml += `  ${dayNames[i].toLowerCase()}:\n`;
         const inputs = document.querySelectorAll(`input[id^="${day}"]`);
         inputs.forEach(input => {
-          yaml += `    ${input.id}: ${input.checked}\n`;
+          const label = document.querySelector(`label[for="${input.id}"]`).textContent;
+          yaml += `    ${input.id}:\n`;
+          yaml += `      description: "${label}"\n`;
+          yaml += `      completed: ${input.checked}\n`;
         });
       });
       const blob = new Blob([yaml], {type: 'text/yaml'});
