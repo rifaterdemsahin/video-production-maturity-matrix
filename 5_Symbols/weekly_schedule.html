@@ -286,6 +286,27 @@
     }
     .theme-btn:hover { background: var(--accent); color: white; }
     .theme-btn.active { background: var(--accent); color: white; }
+
+    .task-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 8px;
+      padding: 3px 10px;
+      background: rgba(233,69,96,0.15);
+      border: 1px solid rgba(233,69,96,0.4);
+      border-radius: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .task-link-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -348,10 +369,10 @@
         <button class="btn reset-btn" onclick="resetDay('sun')">Reset</button>
       </div>
       <ul class="actions">
-        <li class="action-item"><input type="checkbox" id="sun1"><label for="sun1">✏️ Brainstorm topic and core thesis statement on pen and paper <a href="tasks/sun1_BrainstormTopicAndCoreThesisStatementOnPenAndPaper.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="sun2"><label for="sun2">🤖 Give handwritten notes to mobile GPT to rewrite as professional script <a href="tasks/sun2_GiveHandwrittenNotesToMobileGPTToRewriteAsProfessionalScript.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="sun3"><label for="sun3">📝 Outline video structure (intro, body, conclusion) <a href="tasks/sun3_OutlineVideoStructureIntroBodyConclusion.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="sun4"><label for="sun4">📜 Write full script with timestamps and visuals notes <a href="tasks/sun4_WriteFullScriptWithTimestampsAndVisualsNotes.html" style="font-size:0.8em;">📄</a></label></li>
+        <li class="action-item"><input type="checkbox" id="sun1"><label for="sun1">✏️ Brainstorm topic and core thesis statement on pen and paper <a href="tasks/sun1_BrainstormTopicAndCoreThesisStatementOnPenAndPaper.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="sun2"><label for="sun2">🤖 Give handwritten notes to mobile GPT to rewrite as professional script <a href="tasks/sun2_GiveHandwrittenNotesToMobileGPTToRewriteAsProfessionalScript.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="sun3"><label for="sun3">📝 Outline video structure (intro, body, conclusion) <a href="tasks/sun3_OutlineVideoStructureIntroBodyConclusion.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="sun4"><label for="sun4">📜 Write full script with timestamps and visuals notes <a href="tasks/sun4_WriteFullScriptWithTimestampsAndVisualsNotes.html" class="task-link-btn">→</a></label></li>
       </ul>
     </section>
 
@@ -362,12 +383,12 @@
         <button class="btn reset-btn" onclick="resetDay('mon')">Reset</button>
       </div>
       <ul class="actions">
-        <li class="action-item"><input type="checkbox" id="mon1"><label for="mon1">🕔 Wake up at 5 AM and prepare for shooting 🌅 <a href="tasks/mon1_WakeUpAt5AMAndPrepareForShooting.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="mon2"><label for="mon2">📜 Load script into Elgato prompter for teleprompter 🎥 <a href="tasks/mon2_LoadScriptIntoElgatoPrompterForTeleprompter.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="mon3"><label for="mon3">🎤 Shoot talking head footage with post-production plan in mind 📹 <a href="tasks/mon3_ShootTalkingHeadFootageWithPostProductionPlanInMind.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="mon4"><label for="mon4">🖥️ Capture screen recordings for demos 📸 <a href="tasks/mon4_CaptureScreenRecordingsForDemos.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="mon5"><label for="mon5">☁️ Upload raw footage to Google Drive 📁 <a href="tasks/mon5_UploadRawFootageToGoogleDrive.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="mon6"><label for="mon6">📓 Create Obsidian notes for the session 🗒️ <a href="tasks/mon6_CreateObsidianNotesForTheSession.html" style="font-size:0.8em;">📄</a></label></li>
+        <li class="action-item"><input type="checkbox" id="mon1"><label for="mon1">🕔 Wake up at 5 AM and prepare for shooting 🌅 <a href="tasks/mon1_WakeUpAt5AMAndPrepareForShooting.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="mon2"><label for="mon2">📜 Load script into Elgato prompter for teleprompter 🎥 <a href="tasks/mon2_LoadScriptIntoElgatoPrompterForTeleprompter.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="mon3"><label for="mon3">🎤 Shoot talking head footage with post-production plan in mind 📹 <a href="tasks/mon3_ShootTalkingHeadFootageWithPostProductionPlanInMind.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="mon4"><label for="mon4">🖥️ Capture screen recordings for demos 📸 <a href="tasks/mon4_CaptureScreenRecordingsForDemos.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="mon5"><label for="mon5">☁️ Upload raw footage to Google Drive 📁 <a href="tasks/mon5_UploadRawFootageToGoogleDrive.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="mon6"><label for="mon6">📓 Create Obsidian notes for the session 🗒️ <a href="tasks/mon6_CreateObsidianNotesForTheSession.html" class="task-link-btn">→</a></label></li>
       </ul>
     </section>
 
@@ -378,10 +399,10 @@
         <button class="btn reset-btn" onclick="resetDay('tue')">Reset</button>
       </div>
       <ul class="actions">
-        <li class="action-item"><input type="checkbox" id="tue1"><label for="tue1">🎬 Import footage into DaVinci Resolve 📥 <a href="tasks/tue1_ImportFootageIntoDaVinciResolve.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="tue2"><label for="tue2">📋 Clone DaVinci Resolve master template 🔄 <a href="tasks/tue2_CloneDaVinciResolveMasterTemplate.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="tue3"><label for="tue3">🗣️ Place audio track and sync to script 🎵 <a href="tasks/tue3_PlaceAudioTrackAndSyncToScript.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="tue4"><label for="tue4">🖼️ Place screencaptures as A-roll with precise timings ⏱️ <a href="tasks/tue4_PlaceScreencapturesAsARollWithPreciseTimings.html" style="font-size:0.8em;">📄</a></label></li>
+        <li class="action-item"><input type="checkbox" id="tue1"><label for="tue1">🎬 Import footage into DaVinci Resolve 📥 <a href="tasks/tue1_ImportFootageIntoDaVinciResolve.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="tue2"><label for="tue2">📋 Clone DaVinci Resolve master template 🔄 <a href="tasks/tue2_CloneDaVinciResolveMasterTemplate.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="tue3"><label for="tue3">🗣️ Place audio track and sync to script 🎵 <a href="tasks/tue3_PlaceAudioTrackAndSyncToScript.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="tue4"><label for="tue4">🖼️ Place screencaptures as A-roll with precise timings ⏱️ <a href="tasks/tue4_PlaceScreencapturesAsARollWithPreciseTimings.html" class="task-link-btn">→</a></label></li>
       </ul>
     </section>
 
@@ -392,9 +413,9 @@
         <button class="btn reset-btn" onclick="resetDay('wed')">Reset</button>
       </div>
       <ul class="actions">
-        <li class="action-item"><input type="checkbox" id="wed1"><label for="wed1">📜 Take merged script output and break into scenes ✂️ <a href="tasks/wed1_TakeMergedScriptOutputAndBreakIntoScenes.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="wed2"><label for="wed2">🎭 Create sentences and inputs for Remotion animation 📝 <a href="tasks/wed2_CreateSentencesAndInputsForRemotionAnimation.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="wed3"><label for="wed3">💻 Update code to generate DaVinci Resolve deliverables for 16-second scenes 🎞️ <a href="tasks/wed3_UpdateCodeToGenerateDaVinciResolveDeliverablesFor16SecondScenes.html" style="font-size:0.8em;">📄</a></label></li>
+        <li class="action-item"><input type="checkbox" id="wed1"><label for="wed1">📜 Take merged script output and break into scenes ✂️ <a href="tasks/wed1_TakeMergedScriptOutputAndBreakIntoScenes.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="wed2"><label for="wed2">🎭 Create sentences and inputs for Remotion animation 📝 <a href="tasks/wed2_CreateSentencesAndInputsForRemotionAnimation.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="wed3"><label for="wed3">💻 Update code to generate DaVinci Resolve deliverables for 16-second scenes 🎞️ <a href="tasks/wed3_UpdateCodeToGenerateDaVinciResolveDeliverablesFor16SecondScenes.html" class="task-link-btn">→</a></label></li>
       </ul>
     </section>
 
@@ -405,9 +426,9 @@
         <button class="btn reset-btn" onclick="resetDay('thu')">Reset</button>
       </div>
       <ul class="actions">
-        <li class="action-item"><input type="checkbox" id="thu1"><label for="thu1">🖌️ Use fal.ai and Remotion for content generation 🤖 <a href="tasks/thu1_UseFalAiAndRemotionForContentGeneration.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="thu2"><label for="thu2">🎬 Generate script-based mini edits for all exported footage ✨ <a href="tasks/thu2_GenerateScriptBasedMiniEditsForAllExportedFootage.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="thu3"><label for="thu3">🎞️ Create B-roll elements and overlays automatically 🖼️ <a href="tasks/thu3_CreateBRollElementsAndOverlaysAutomatically.html" style="font-size:0.8em;">📄</a></label></li>
+        <li class="action-item"><input type="checkbox" id="thu1"><label for="thu1">🖌️ Use fal.ai and Remotion for content generation 🤖 <a href="tasks/thu1_UseFalAiAndRemotionForContentGeneration.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="thu2"><label for="thu2">🎬 Generate script-based mini edits for all exported footage ✨ <a href="tasks/thu2_GenerateScriptBasedMiniEditsForAllExportedFootage.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="thu3"><label for="thu3">🎞️ Create B-roll elements and overlays automatically 🖼️ <a href="tasks/thu3_CreateBRollElementsAndOverlaysAutomatically.html" class="task-link-btn">→</a></label></li>
       </ul>
     </section>
 
@@ -418,9 +439,9 @@
         <button class="btn reset-btn" onclick="resetDay('fri')">Reset</button>
       </div>
       <ul class="actions">
-        <li class="action-item"><input type="checkbox" id="fri1"><label for="fri1">📂 Place assets to timeline by sorting filenames 🔤 <a href="tasks/fri1_PlaceAssetsToTimelineBySortingFilenames.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="fri2"><label for="fri2">🎵 Normalize audio levels and balance ⚖️ <a href="tasks/fri2_NormalizeAudioLevelsAndBalance.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="fri3"><label for="fri3">📑 Add chapter markers and subtitles 💬 <a href="tasks/fri3_AddChapterMarkersAndSubtitles.html" style="font-size:0.8em;">📄</a></label></li>
+        <li class="action-item"><input type="checkbox" id="fri1"><label for="fri1">📂 Place assets to timeline by sorting filenames 🔤 <a href="tasks/fri1_PlaceAssetsToTimelineBySortingFilenames.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="fri2"><label for="fri2">🎵 Normalize audio levels and balance ⚖️ <a href="tasks/fri2_NormalizeAudioLevelsAndBalance.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="fri3"><label for="fri3">📑 Add chapter markers and subtitles 💬 <a href="tasks/fri3_AddChapterMarkersAndSubtitles.html" class="task-link-btn">→</a></label></li>
       </ul>
     </section>
 
@@ -431,11 +452,11 @@
         <button class="btn reset-btn" onclick="resetDay('sat')">Reset</button>
       </div>
       <ul class="actions">
-        <li class="action-item"><input type="checkbox" id="sat1"><label for="sat1">📤 Export final video in all formats 🎥 <a href="tasks/sat1_ExportFinalVideoInAllFormats.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="sat2"><label for="sat2">📺 Upload to YouTube and platforms ☁️ <a href="tasks/sat2_UploadToYouTubeAndPlatforms.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="sat3"><label for="sat3">✍️ Write title, description, tags 🏷️ <a href="tasks/sat3_WriteTitleDescriptionTags.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="sat4"><label for="sat4">🖼️ Create and upload thumbnail ⬆️ <a href="tasks/sat4_CreateAndUploadThumbnail.html" style="font-size:0.8em;">📄</a></label></li>
-        <li class="action-item"><input type="checkbox" id="sat5"><label for="sat5">📅 Schedule post and promote 📣 <a href="tasks/sat5_SchedulePostAndPromote.html" style="font-size:0.8em;">📄</a></label></li>
+        <li class="action-item"><input type="checkbox" id="sat1"><label for="sat1">📤 Export final video in all formats 🎥 <a href="tasks/sat1_ExportFinalVideoInAllFormats.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="sat2"><label for="sat2">📺 Upload to YouTube and platforms ☁️ <a href="tasks/sat2_UploadToYouTubeAndPlatforms.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="sat3"><label for="sat3">✍️ Write title, description, tags 🏷️ <a href="tasks/sat3_WriteTitleDescriptionTags.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="sat4"><label for="sat4">🖼️ Create and upload thumbnail ⬆️ <a href="tasks/sat4_CreateAndUploadThumbnail.html" class="task-link-btn">→</a></label></li>
+        <li class="action-item"><input type="checkbox" id="sat5"><label for="sat5">📅 Schedule post and promote 📣 <a href="tasks/sat5_SchedulePostAndPromote.html" class="task-link-btn">→</a></label></li>
       </ul>
     </section>
 
