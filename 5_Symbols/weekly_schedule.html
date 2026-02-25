@@ -423,18 +423,38 @@
     // Init debug
     applyDebugState();
 
-    // Checklist JS
-    function loadState() {
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('sprint_')) {
-          const cb = document.getElementById(key);
-          if (cb) cb.checked = JSON.parse(localStorage.getItem(key));
+    // Cookie functions
+    function setCookie(name, value, days) {
+      const d = new Date();
+      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+      document.cookie = name + "=" + encodeURIComponent(value) + ";expires=" + d.toUTCString() + ";path=/";
+    }
+    function getCookie(name) {
+      const cname = name + "=";
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const ca = decodedCookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(cname) == 0) {
+          return c.substring(cname.length, c.length);
         }
       }
+      return "";
+    }
+
+    // Checklist JS
+    function loadState() {
+      const inputs = document.querySelectorAll('input[type="checkbox"]');
+      inputs.forEach(input => {
+        const val = getCookie('sprint_' + input.id);
+        if (val !== "") input.checked = JSON.parse(val);
+      });
     }
     function saveState(id, checked) {
-      localStorage.setItem('sprint_' + id, JSON.stringify(checked));
+      setCookie('sprint_' + id, JSON.stringify(checked), 30);
     }
     function resetDay(prefix) {
       const inputs = document.querySelectorAll(`[id^="${prefix}"]`);
@@ -445,8 +465,9 @@
     }
     function resetWeek() {
       if (confirm('Reset all checkboxes for the week?')) {
-        Object.keys(localStorage).forEach(key => {
-          if (key.startsWith('sprint_')) localStorage.removeItem(key);
+        const inputs = document.querySelectorAll('input[type="checkbox"]');
+        inputs.forEach(input => {
+          setCookie('sprint_' + input.id, JSON.stringify(false), 30);
         });
         location.reload();
       }
