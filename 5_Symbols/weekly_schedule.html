@@ -22,6 +22,32 @@
       --shadow: 0 4px 24px rgba(0,0,0,0.4);
       --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
+    [data-theme="light"] {
+      --bg: #f5f5f5;
+      --surface: #ffffff;
+      --surface2: #f0f0f0;
+      --accent: #007bff;
+      --accent2: #0056b3;
+      --text: #333333;
+      --text-muted: #666666;
+      --success: #28a745;
+      --warning: #ffc107;
+      --info: #17a2b8;
+      --shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+    [data-theme="sport"] {
+      --bg: #000000;
+      --surface: #1a1a1a;
+      --surface2: #2a2a2a;
+      --accent: #ff4500;
+      --accent2: #cc3700;
+      --text: #ffffff;
+      --text-muted: #cccccc;
+      --success: #32cd32;
+      --warning: #ffd700;
+      --info: #00ced1;
+      --shadow: 0 4px 24px rgba(255,69,0,0.3);
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: var(--font);
@@ -247,6 +273,19 @@
       .day-header { flex-direction: column; align-items: flex-start; gap: 8px; }
       .day-section { margin: 16px; padding: 20px; }
     }
+    .theme-btn {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin: 0 4px;
+      transition: all 0.2s;
+    }
+    .theme-btn:hover { background: var(--accent); color: white; }
+    .theme-btn.active { background: var(--accent); color: white; }
   </style>
 </head>
 <body>
@@ -280,6 +319,11 @@
   <!-- CONTENT MENU -->
   <section style="max-width: 900px; margin: 0 auto; padding: 20px;">
     <h2 style="text-align: center; margin-bottom: 20px; color: var(--accent);">📚 Project Content Menu</h2>
+    <div style="text-align: center; margin-bottom: 20px;">
+      <button onclick="setTheme('dark')" class="theme-btn" data-theme="dark">🌙 Dark</button>
+      <button onclick="setTheme('light')" class="theme-btn" data-theme="light">☀️ Light</button>
+      <button onclick="setTheme('sport')" class="theme-btn" data-theme="sport">⚽ Sport</button>
+    </div>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
       <a href="../index.html" style="display: block; padding: 15px; background: var(--surface); border-radius: 8px; text-decoration: none; color: var(--text); border: 1px solid rgba(255,255,255,0.07); transition: all 0.2s;">🏠 Home</a>
       <a href="../aigent.md" style="display: block; padding: 15px; background: var(--surface); border-radius: 8px; text-decoration: none; color: var(--text); border: 1px solid rgba(255,255,255,0.07); transition: all 0.2s;">🤖 Agent Rules</a>
@@ -487,6 +531,17 @@
       document.getElementById('progress-percent').textContent = percent + '%';
       document.getElementById('progress-bar').style.width = percent + '%';
     }
+    function setTheme(theme) {
+      document.body.setAttribute('data-theme', theme);
+      setCookie('theme', theme, 365);
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === theme);
+      });
+    }
+    function loadTheme() {
+      const theme = getCookie('theme') || 'dark';
+      setTheme(theme);
+    }
     document.addEventListener('change', (e) => {
       if (e.target.type === 'checkbox') {
         saveState(e.target.id, e.target.checked);
@@ -495,6 +550,7 @@
     });
     loadState();
     updateProgress();
+    loadTheme();
   </script>
 </body>
 </html>

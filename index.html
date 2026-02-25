@@ -24,6 +24,32 @@
       --shadow: 0 4px 24px rgba(0,0,0,0.4);
       --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
+    [data-theme="light"] {
+      --bg: #f5f5f5;
+      --surface: #ffffff;
+      --surface2: #f0f0f0;
+      --accent: #007bff;
+      --accent2: #0056b3;
+      --text: #333333;
+      --text-muted: #666666;
+      --success: #28a745;
+      --warning: #ffc107;
+      --info: #17a2b8;
+      --shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+    [data-theme="sport"] {
+      --bg: #000000;
+      --surface: #1a1a1a;
+      --surface2: #2a2a2a;
+      --accent: #ff4500;
+      --accent2: #cc3700;
+      --text: #ffffff;
+      --text-muted: #cccccc;
+      --success: #32cd32;
+      --warning: #ffd700;
+      --info: #00ced1;
+      --shadow: 0 4px 24px rgba(255,69,0,0.3);
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: var(--font);
@@ -209,6 +235,19 @@
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(233,69,96,0.4); }
     .btn-outline { background: transparent; border: 1px solid rgba(233,69,96,0.5); color: var(--accent); }
     .btn-outline:hover { background: rgba(233,69,96,0.1); transform: translateY(-2px); }
+    .theme-btn {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin: 0 4px;
+      transition: all 0.2s;
+    }
+    .theme-btn:hover { background: var(--accent); color: white; }
+    .theme-btn.active { background: var(--accent); color: white; }
 
     /* Social icons */
     .social-row {
@@ -431,6 +470,12 @@
     <a href="#stages" class="btn btn-primary">🗺️ Explore Journey</a>
     <a href="5_Symbols/weekly_schedule.html" class="btn btn-outline">📅 Weekly Sprint</a>
     <a href="markdown_renderer.html" class="btn btn-outline">📝 View Docs</a>
+  </div>
+
+  <div class="theme-switcher" style="margin-top: 1rem;">
+    <button onclick="setTheme('dark')" class="theme-btn" data-theme="dark">🌙 Dark</button>
+    <button onclick="setTheme('light')" class="theme-btn" data-theme="light">☀️ Light</button>
+    <button onclick="setTheme('sport')" class="theme-btn" data-theme="sport">⚽ Sport</button>
   </div>
 
   <div class="social-row">
@@ -697,10 +742,39 @@ function goToSlide(i) { carouselIdx = i; updateCarousel(); }
 // Auto-advance carousel
 setInterval(() => carouselMove(1), 4000);
 
+// ── THEME SWITCHER ──
+function getCookie(name) {
+  const cname = name + "=";
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(cname) == 0) {
+      return c.substring(cname.length, c.length);
+    }
+  }
+  return "";
+}
+function setTheme(theme) {
+  document.body.setAttribute('data-theme', theme);
+  document.cookie = `theme=${theme};path=/;max-age=${60*60*24*365}`;
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === theme);
+  });
+}
+function loadTheme() {
+  const theme = getCookie('theme') || 'dark';
+  setTheme(theme);
+}
+
 // ── INIT ──
 buildScoreGrid();
 buildDots();
 applyDebugState();
+loadTheme();
 
 // Highlight active nav link
 document.querySelectorAll('.nav-links a').forEach(a => {
