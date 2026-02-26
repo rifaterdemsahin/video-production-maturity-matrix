@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DaVinci Resolve Clip Splitter Script</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #475569;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+        pre {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+        .explanation {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-link:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="maturity_matrix.html" class="back-link">← Back to Maturity Matrix</a>
+        <h1>🎬 DaVinci Resolve Clip Splitter Script</h1>
+        <p class="explanation">
+            This Lua script for DaVinci Resolve automates the process of splitting a timeline into multiple clips based on timecode ranges and exporting each segment as a separate timeline. It's particularly useful for breaking down long-form content into shorter, manageable pieces for video production workflows.
+        </p>
+
+        <h2>Key Features</h2>
+        <ul class="explanation">
+            <li><strong>Timecode-based Splitting:</strong> Define exact timecode ranges for each clip segment</li>
+            <li><strong>Automatic Clip Detection:</strong> Finds all video clips within the specified time ranges</li>
+            <li><strong>Timeline Creation:</strong> Creates new timelines for each segment with the relevant clips</li>
+            <li><strong>Batch Export:</strong> Adds render jobs for each new timeline automatically</li>
+            <li><strong>Frame-accurate:</strong> Handles frame offsets and timeline positioning precisely</li>
+        </ul>
+
+        <h2>How It Works</h2>
+        <p class="explanation">
+            The script works by:
+        </p>
+        <ol class="explanation">
+            <li>Scanning the source timeline for all video clips on track 1</li>
+            <li>For each defined segment, finding clips that overlap with the timecode range</li>
+            <li>Creating new timelines containing only the relevant portions of those clips</li>
+            <li>Setting up render jobs to export each timeline as a separate file</li>
+        </ol>
+
+        <h2>Configuration</h2>
+        <p class="explanation">
+            Before running, update these variables at the top of the script:
+        </p>
+        <ul class="explanation">
+            <li><code>SOURCE_TIMELINE_NAME</code>: Name of your source timeline</li>
+            <li><code>OUTPUT_DIR</code>: Directory where exported files will be saved</li>
+            <li><code>FPS</code>: Frames per second of your project</li>
+            <li><code>TL_START_FRAME</code>: Frame number where your timeline actually starts (for offset calculations)</li>
+            <li><code>SEGMENTS</code>: Array of segments with name, start_tc, and end_tc</li>
+        </ul>
+
+        <h2>Usage Instructions</h2>
+        <ol class="explanation">
+            <li>Open your DaVinci Resolve project</li>
+            <li>Ensure your source timeline is active</li>
+            <li>Run the script via Resolve's console or script panel</li>
+            <li>Check the Deliver page for the queued render jobs</li>
+            <li>Render the jobs to export your split clips</li>
+        </ol>
+
+        <h2>Script Code</h2>
+        <pre><code>-- splitTimeline_export_v11.lua
+-- Bypassing GetStart() using confirmed frame constants
+
+local resolve   = Resolve()
+local project   = resolve:GetProjectManager():GetCurrentProject()
+local mediaPool = project:GetMediaPool()
+
+-- ─── CONFIG ────────────────────────────────────────────────────────────────
+local SOURCE_TIMELINE_NAME = "Timeline 1"
+local OUTPUT_DIR           = "/Users/rifaterdemsahin/projects/"
+local FPS                  = 25
+
+-- Based on your screenshot: 01:00:00:00 is frame 86400
+local TL_START_FRAME = 86400 
+
+local SEGMENTS = {
+    { name = "Clip_01_InTheShop",          start_tc = "01:00:00:00", end_tc = "01:00:00:24" },
+    { name = "Clip_02_IceCreamConclusion", start_tc = "01:00:00:24", end_tc = "01:00:14:13" }
+}
+
+-- ─── HELPERS ────────────────────────────────────────────────────────────────
+local function tc_to_frames_fixed(tc)
+    local h, m, s, f = tc:match("(%d+):(%d+):(%d+):(%d+)")
+    if not h then return 0 end
+    -- Convert TC to frames, then subtract 1 hour (3600s) and add our timeline start (86400)
+    local absolute_seconds = (tonumber(h) * 3600) + (tonumber(m) * 60) + tonumber(s)
+    local frames_from_zero = (absolute_seconds * FPS) + tonumber(f)
+    
+    -- In your specific project: 01:00:00:00 (90,000 frames) actually maps to 86,400
+    -- This means your timeline is using a 24fps frame count base in a 25fps project 
+    -- or has a specific offset. We adjust by the difference:
+    return frames_from_zero - (90000 - TL_START_FRAME)
+end
+
+-- ─── MAIN ───────────────────────────────────────────────────────────────────
+local sourceTL = project:GetCurrentTimeline()
+if not sourceTL or sourceTL:GetName() ~= SOURCE_TIMELINE_NAME then
+    print("ERROR: Please open 'Timeline 1' before running.")
+    return
+end
+
+print("Scanning Timeline: " .. sourceTL:GetName())
+
+local videoItems = sourceTL:GetItemListInTrack("video", 1)
+local clipInfoList = {}
+
+if videoItems then
+    for _, item in ipairs(videoItems) do
+        local mpItem = item:GetMediaPoolItem()
+        if mpItem then
+            table.insert(clipInfoList, {
+                mediaPoolItem = mpItem,
+                tlStart = item:GetStart(), -- These methods (GetStart on items) work fine
+                tlEnd   = item:GetEnd(),
+                srcStart = item:GetLeftOffset()
+            })
+        end
+    end
+end
+
+for i, seg in ipairs(SEGMENTS) do
+    local segStart = tc_to_frames_fixed(seg.start_tc)
+    local segEnd   = tc_to_frames_fixed(seg.end_tc)
+
+    print(string.format("Processing [%s]: Range %d to %d", seg.name, segStart, segEnd))
+
+    local segClips = {}
+    for _, c in ipairs(clipInfoList) do
+        if c.tlEnd > segStart and c.tlStart < segEnd then
+            local clampedStart = math.max(c.tlStart, segStart)
+            local clampedEnd   = math.min(c.tlEnd, segEnd)
+            local offset       = clampedStart - c.tlStart
+            
+            table.insert(segClips, {
+                mediaPoolItem = c.mediaPoolItem,
+                startFrame    = c.srcStart + offset,
+                endFrame      = c.srcStart + offset + (clampedEnd - clampedStart)
+            })
+        end
+    end
+
+    if #segClips > 0 then
+        local newTL = mediaPool:CreateTimelineFromClips(seg.name, segClips)
+        if newTL then
+            project:SetCurrentTimeline(newTL)
+            project:SetRenderSettings({
+                SelectAllFrames = true,
+                TargetDir       = OUTPUT_DIR,
+                CustomName      = seg.name
+            })
+            project:AddRenderJob()
+            print("  -> Added to Deliver Page")
+        end
+    else
+        print("  -> WARNING: No clips found in this range.")
+    end
+end
+
+project:SetCurrentTimeline(sourceTL)
+print("Done.")</code></pre>
+    </div>
+</body>
+</html>
