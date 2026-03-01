@@ -6,6 +6,7 @@
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-rifaterdemsahin-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/rifaterdemsahin/)
 [![YouTube](https://img.shields.io/badge/YouTube-RifatErdemSahin-FF0000?style=flat-square&logo=youtube)](https://www.youtube.com/@RifatErdemSahin)
 
+> https://rifaterdemsahin.github.io/video-production-maturity-matrix/
 ---
 
 ## 📅 Content Production Sprint
@@ -15,8 +16,8 @@ The weekly cadence that drives consistent output:
 * **Sunday:** Write the script (Thesis) ✍️📜
 * **Monday:** Shoot the footage and record screen captures (Antithesis) 📸🖥️
 * **Tuesday:** Create a single timeline and merge the best takes into a unified script (Synthesis) 🎬🧬
-* **Wednesday:** Bulk generate code updates for scenes 🎨🖼️
-* **Thursday:** Bulk generate backgrounds graphics and animations ✨🎞️
+* **Wednesday:** Bulk generate markers for scenes 🎨🖼️
+* **Thursday:** Bulk generate code updates, backgrounds graphics and animations ✨🎞️
 * **Friday:** Place all artifacts and assets into the project 🛠️📦
 * **Saturday:** Perform final cuts and publish 🚀🌐
 
