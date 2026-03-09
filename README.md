@@ -1,5 +1,9 @@
 # 🎬 Video Production Maturity Matrix
 
+- Production Checlist 
+
+> https://rifaterdemsahin.github.io/video-production-maturity-matrix/5_Symbols/production_check_list.html
+
 > Assess and evolve Rifat Erdem Sahin's video production process — from ad-hoc chaos to an optimized, data-driven creative machine.
 
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen?style=flat-square&logo=github)](https://rifaterdemsahin.github.io/video-production-maturity-matrix/)
