@@ -3,125 +3,868 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vebende Academy | Production Checklist</title>
+    <title>Video Production Checklist</title>
     <style>
-        :root { --primary: #3b82f6; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #10b981; }
-        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
-        .container { max-width: 800px; margin: auto; }
-        .header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid #334155; padding-bottom: 20px; }
-        .section { background: var(--card); padding: 25px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #334155; }
-        h2 { color: var(--primary); font-size: 1.2rem; text-transform: uppercase; margin-top: 0; display: flex; align-items: center; gap: 10px; }
-        .item { display: flex; align-items: flex-start; margin-bottom: 15px; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.02); }
-        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 15px; cursor: pointer; accent-color: var(--primary); }
-        label { cursor: pointer; flex: 1; }
-        .instruction { display: block; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; }
-        
-        /* Image Placeholder Style */
-        .img-placeholder { 
-            margin: 15px 0; padding: 20px; border: 2px dashed #475569; border-radius: 8px; 
-            text-align: center; background: rgba(15, 23, 42, 0.5); color: #64748b; font-size: 0.8rem;
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        :root {
+            --primary: #3b82f6;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --accent: #10b981;
+            --warn: #f59e0b;
+            --danger: #ef4444;
+            --muted: #94a3b8;
+            --border: #334155;
         }
-        .img-placeholder::before { content: "🖼️ IMAGE/B-ROLL SLOT"; font-weight: bold; color: var(--primary); }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 24px 20px 60px;
+            line-height: 1.6;
+        }
+        .container { max-width: 900px; margin: auto; }
 
-        input[type="checkbox"]:checked + label { text-decoration: line-through; opacity: 0.4; }
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; }
+        .header p { color: var(--muted); margin-top: 6px; font-size: 1rem; }
+        .progress-bar-wrap {
+            background: var(--border); border-radius: 99px; height: 8px;
+            margin-top: 18px; overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 99px; width: 0%; transition: width 0.4s ease;
+        }
+        .progress-label { color: var(--muted); font-size: 0.8rem; margin-top: 8px; }
+
+        /* Section */
+        .section {
+            background: var(--card); padding: 22px 24px;
+            border-radius: 16px; margin-bottom: 24px; border: 1px solid var(--border);
+        }
+        .section.accent { border-color: var(--accent); }
+        .section.warn   { border-color: var(--warn); }
+        h2 {
+            font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+            color: var(--primary);
+        }
+        .section.accent h2 { color: var(--accent); }
+        .section.warn   h2 { color: var(--warn); }
+
+        /* Item */
+        .item {
+            display: flex; align-items: flex-start; gap: 12px;
+            margin-bottom: 12px; padding: 12px; border-radius: 10px;
+            background: rgba(255,255,255,0.02); transition: background 0.2s;
+        }
+        .item:hover { background: rgba(255,255,255,0.05); }
+        input[type="checkbox"] {
+            width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;
+            cursor: pointer; accent-color: var(--primary);
+        }
+        .item-body { flex: 1; min-width: 0; }
+        .item-body strong { display: block; font-size: 0.95rem; }
+        .instruction { color: var(--muted); font-size: 0.85rem; margin-top: 3px; }
+        input[type="checkbox"]:checked ~ .item-body strong,
+        input[type="checkbox"]:checked ~ .item-body .instruction {
+            text-decoration: line-through; opacity: 0.45;
+        }
+
+        /* Thumbnail */
+        .thumb-wrap {
+            flex-shrink: 0; width: 72px; height: 54px; border-radius: 6px;
+            overflow: hidden; border: 1px solid var(--border); cursor: pointer;
+            position: relative;
+        }
+        .thumb-wrap img {
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+        .thumb-wrap:hover img { transform: scale(1.08); opacity: 0.85; }
+        .thumb-wrap::after {
+            content: "\1F50D";
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; opacity: 0; transition: opacity 0.2s;
+            background: rgba(0,0,0,0.45);
+        }
+        .thumb-wrap:hover::after { opacity: 1; }
+
+        /* Modal */
+        #modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85); z-index: 9999;
+            align-items: center; justify-content: center;
+            padding: 20px; backdrop-filter: blur(4px);
+        }
+        #modal-overlay.active { display: flex; }
+        #modal-box {
+            position: relative; max-width: 92vw; max-height: 88vh;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        #modal-img {
+            max-width: 100%; max-height: 80vh; border-radius: 12px;
+            border: 2px solid var(--border);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.7); object-fit: contain;
+        }
+        #modal-caption {
+            color: var(--text); font-size: 0.9rem; text-align: center;
+            max-width: 600px; opacity: 0.85;
+        }
+        #modal-close {
+            position: absolute; top: -16px; right: -16px;
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--card); border: 1px solid var(--border);
+            color: var(--text); font-size: 1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #modal-close:hover { background: var(--danger); }
+
+        .footer { text-align: center; color: #475569; font-size: 0.78rem; margin-top: 40px; }
     </style>
 </head>
 <body>
 
+<!-- Modal -->
+<div id="modal-overlay" role="dialog" aria-modal="true" aria-label="Image preview">
+    <div id="modal-box">
+        <button id="modal-close" aria-label="Close">&times;</button>
+        <img id="modal-img" src="" alt="">
+        <div id="modal-caption"></div>
+    </div>
+</div>
+
 <div class="container">
     <div class="header">
-        <h1>Vebende Academy</h1>
-        <p>Production Assistant Technical Checklist</p>
+        <h1>&#127916; Video Production Checklist</h1>
+        <p>Step-by-step guide for a flawless recording session</p>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="progress-label" id="progressLabel">0 / 0 tasks completed</div>
     </div>
 
+    <!-- SECTION 1: Environment Setup -->
     <div class="section">
-        <h2>🖥️ Interface & Environment</h2>
-        
-        <div class="img-placeholder">
-            [Insert Screenshot: Vebende Academy Register Page - Desktop Full View]
-            <br><em>Ensure all sidebar items are expanded and visible.</em>
-        </div>
+        <h2>&#128421;&#65039; Environment Setup</h2>
 
         <div class="item">
             <input type="checkbox" id="e1">
-            <label for="e1">
-                <strong>Desktop Mode Verification</strong>
-                <span class="instruction">Verify the site is NOT in mobile view. Left sidebar must be fully expanded.</span>
-            </label>
+            <div class="item-body">
+                <strong>Single Monitor Mode</strong>
+                <span class="instruction">Use multi-monitor tool to set single-monitor layout before starting.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_set_single_monitor_with_multimonitor_tool-at-start-%2006.01..01.jpeg" data-caption="Set single monitor with multi-monitor tool at start">
+                <img src="production-checklist/production_checklist_set_single_monitor_with_multimonitor_tool-at-start-%2006.01..01.jpeg" alt="Set single monitor" loading="lazy">
+            </div>
         </div>
+
         <div class="item">
             <input type="checkbox" id="e2">
-            <label for="e2">
-                <strong>Sidebar Item Audit</strong>
-                <span class="instruction">Check that Kubernetes, DevOps, and Microservices modules are clearly listed.</span>
-            </label>
+            <div class="item-body">
+                <strong>Configure Stream Deck for Video Production</strong>
+                <span class="instruction">Open Stream Deck and load the video production profile.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.02.09_set_Streamdeck_for_video_production.jpeg" data-caption="Set Streamdeck for video production">
+                <img src="production-checklist/production_checklist_06.02.09_set_Streamdeck_for_video_production.jpeg" alt="Set Streamdeck" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="e3">
+            <div class="item-body">
+                <strong>Load Script to Prompter</strong>
+                <span class="instruction">Copy the latest script into the teleprompter software.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.02.38_set_Script_to_prompter.jpeg" data-caption="Set script to prompter">
+                <img src="production-checklist/production_checklist_06.02.38_set_Script_to_prompter.jpeg" alt="Script to prompter" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="e4">
+            <div class="item-body">
+                <strong>Set Claude as AI Assistant &amp; Update Script</strong>
+                <span class="instruction">Open Claude, set production context, refine and update the script.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.03.22_set_claude_As_asisstant_update_script.jpeg" data-caption="Set Claude as assistant, update script">
+                <img src="production-checklist/production_checklist_06.03.22_set_claude_As_asisstant_update_script.jpeg" alt="Claude as assistant" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="e5">
+            <div class="item-body">
+                <strong>Add Claude to Stream Deck Context</strong>
+                <span class="instruction">Assign Claude shortcut in Stream Deck for quick video production queries.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.04.47_set_claude_into_stream_deck_video_production_context.jpeg" data-caption="Set Claude into Stream Deck video production context">
+                <img src="production-checklist/production_checklist_06.04.47_set_claude_into_stream_deck_video_production_context.jpeg" alt="Claude Stream Deck context" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="e6">
+            <div class="item-body">
+                <strong>Confirm Updated Script is Loaded</strong>
+                <span class="instruction">Verify the prompter shows the final revised script before recording.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.05.23_addthe_new_script_updated.jpeg" data-caption="Add the new updated script">
+                <img src="production-checklist/production_checklist_06.05.23_addthe_new_script_updated.jpeg" alt="New updated script" loading="lazy">
+            </div>
         </div>
     </div>
 
+    <!-- SECTION 2: OBS & Recording -->
     <div class="section">
-        <h2>🎙️ Narrative & Script Hooks</h2>
-        
-        <div class="item">
-            <input type="checkbox" id="s1">
-            <label for="s1">
-                <strong>Opening Hook Captured</strong>
-                <span class="instruction">"Are you ready to learn system design, not just coding?"</span>
-            </label>
-        </div>
-
-        <div class="img-placeholder">
-            [Insert B-Roll: Moving Terminal Code / Kubernetes Cluster Dashboard]
-        </div>
+        <h2>&#127897;&#65039; OBS &amp; Recording Configuration</h2>
 
         <div class="item">
-            <input type="checkbox" id="s2">
-            <label for="s2">
-                <strong>The "Why Vebende" Segment</strong>
-                <span class="instruction">Highlighting 25 years of field experience and the transition from Coder to Architect.</span>
-            </label>
+            <input type="checkbox" id="o1">
+            <div class="item-body">
+                <strong>Add OBS Shortcuts with Replay Buffer</strong>
+                <span class="instruction">Configure hotkeys for record start/stop and replay buffer in OBS.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.07.21_add%20the_obs_short_cuts_with_frame_buffer.jpeg" data-caption="Add OBS shortcuts with frame buffer">
+                <img src="production-checklist/production_checklist_06.07.21_add%20the_obs_short_cuts_with_frame_buffer.jpeg" alt="OBS shortcuts" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="o2">
+            <div class="item-body">
+                <strong>Turn Off Voice Assistant</strong>
+                <span class="instruction">Disable Siri / Cortana / Google Assistant to avoid interruptions.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.08.15_turn_off_voice_assit.jpeg" data-caption="Turn off voice assistant">
+                <img src="production-checklist/production_checklist_06.08.15_turn_off_voice_assit.jpeg" alt="Turn off voice assist" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="o3">
+            <div class="item-body">
+                <strong>Set Video Output Folder in Stream Deck</strong>
+                <span class="instruction">Confirm the destination folder shortcut is correct on Stream Deck.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.17.47_set_video_folder_in_stream_deck.jpeg" data-caption="Set video folder in Stream Deck">
+                <img src="production-checklist/production_checklist_06.17.47_set_video_folder_in_stream_deck.jpeg" alt="Video folder Stream Deck" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="o4">
+            <div class="item-body">
+                <strong>Mitigate Production Errors</strong>
+                <span class="instruction">Review known error list; resolve any OBS/scene/source issues before recording.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.18.57_mitigate_Errors_in_production.jpeg" data-caption="Mitigate errors in production">
+                <img src="production-checklist/production_checklist_06.18.57_mitigate_Errors_in_production.jpeg" alt="Mitigate errors" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="o5">
+            <div class="item-body">
+                <strong>Verify OBS Record Button &amp; Replay Buffer</strong>
+                <span class="instruction">Start a test record to confirm both record and replay buffer are active.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.22.25_obs_record_button_with_replay_buffer.jpeg" data-caption="OBS record button with replay buffer">
+                <img src="production-checklist/production_checklist_06.22.25_obs_record_button_with_replay_buffer.jpeg" alt="OBS record + replay buffer" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="o6">
+            <div class="item-body">
+                <strong>Use OBS Projector for Confidence Monitor</strong>
+                <span class="instruction">Enable fullscreen projector on the secondary display for live preview.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.26.56_use_obs_projector_for_confidence_monitor.jpeg" data-caption="Use OBS projector for confidence monitor">
+                <img src="production-checklist/production_checklist_06.26.56_use_obs_projector_for_confidence_monitor.jpeg" alt="OBS projector confidence monitor" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="o7">
+            <div class="item-body">
+                <strong>Side-by-Side Confidence Monitor Layout</strong>
+                <span class="instruction">Arrange prompter and OBS preview in side-by-side mode.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.28.03_use_confidence_monitor_side_by_side.jpeg" data-caption="Use confidence monitor side by side">
+                <img src="production-checklist/production_checklist_06.28.03_use_confidence_monitor_side_by_side.jpeg" alt="Confidence monitor side by side" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="o8">
+            <div class="item-body">
+                <strong>Practical Record Shortcuts on Stream Deck</strong>
+                <span class="instruction">Test all record shortcuts are mapped and responsive on Stream Deck.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.29.59_practical_record_shortcuts.jpeg" data-caption="Practical record shortcuts">
+                <img src="production-checklist/production_checklist_06.29.59_practical_record_shortcuts.jpeg" alt="Record shortcuts" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="o9">
+            <div class="item-body">
+                <strong>Multi-Version Action Setup</strong>
+                <span class="instruction">Prepare multi-take / multi-version recording strategy in OBS.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.30.41_multi_version_action.jpeg" data-caption="Multi version action">
+                <img src="production-checklist/production_checklist_06.30.41_multi_version_action.jpeg" alt="Multi version action" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="o10">
+            <div class="item-body">
+                <strong>Check Recorded Videos with Timecodes</strong>
+                <span class="instruction">Review recorded clip timestamps to confirm successful recordings.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.51.07_recoded_videos_timecoded_check.jpeg" data-caption="Recorded videos timecoded check">
+                <img src="production-checklist/production_checklist_06.51.07_recoded_videos_timecoded_check.jpeg" alt="Timecoded check" loading="lazy">
+            </div>
         </div>
     </div>
 
+    <!-- SECTION 3: Camera Setup -->
     <div class="section">
-        <h2>🔌 Hardware & Advanced Tech</h2>
-        
-        <div class="img-placeholder">
-            [Insert Image: Pi-Stream Setup or Raspberry Pi Pico Hardware Close-up]
+        <h2>&#128247; Camera Setup</h2>
+
+        <div class="item">
+            <input type="checkbox" id="c1">
+            <div class="item-body">
+                <strong>Power On Sony ZV1 Camera</strong>
+                <span class="instruction">Turn on the Sony ZV1 and confirm it connects to OBS / capture card.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.08.41_open_sonyzv1_camera.jpeg" data-caption="Open Sony ZV1 camera">
+                <img src="production-checklist/production_checklist_06.08.41_open_sonyzv1_camera.jpeg" alt="Sony ZV1 camera" loading="lazy">
+            </div>
         </div>
 
         <div class="item">
-            <input type="checkbox" id="h1">
-            <label for="h1">
-                <strong>Pi-Stream / Pico Visibility</strong>
-                <span class="instruction">Ensure hardware units are in frame when mentioning "Real-world production standards."</span>
-            </label>
+            <input type="checkbox" id="c2">
+            <div class="item-body">
+                <strong>Check Autofocus</strong>
+                <span class="instruction">Confirm autofocus locks on face and is tracking correctly.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.09.42_check_autofocus_in_camera.jpeg" data-caption="Check autofocus in camera">
+                <img src="production-checklist/production_checklist_06.09.42_check_autofocus_in_camera.jpeg" alt="Autofocus check" loading="lazy">
+            </div>
         </div>
+
         <div class="item">
-            <input type="checkbox" id="h2">
-            <label for="h2">
-                <strong>Multi-Monitor Setup</strong>
-                <span class="instruction">Capture wide shot of the engineer's workspace (Architect's desk).</span>
-            </label>
+            <input type="checkbox" id="c3">
+            <div class="item-body">
+                <strong>Check Arms &amp; Head Framing</strong>
+                <span class="instruction">Ensure arms and top of head are visible and within frame boundaries.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.23.09_check_arms_in_frame%20_wtih%20top%20head.jpeg" data-caption="Check arms in frame with top head">
+                <img src="production-checklist/production_checklist_06.23.09_check_arms_in_frame%20_wtih%20top%20head.jpeg" alt="Arms and head framing" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="c4">
+            <div class="item-body">
+                <strong>Head &amp; Arm Recheck</strong>
+                <span class="instruction">Re-verify framing after any position adjustment.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.43.12_head_arm_recheck.jpeg" data-caption="Head and arm recheck">
+                <img src="production-checklist/production_checklist_06.43.12_head_arm_recheck.jpeg" alt="Head arm recheck" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="c5">
+            <div class="item-body">
+                <strong>Framing Check in Footage</strong>
+                <span class="instruction">Play back a short test clip to validate the final on-screen composition.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.47.03_framing_check_in_footage.jpeg" data-caption="Framing check in footage">
+                <img src="production-checklist/production_checklist_06.47.03_framing_check_in_footage.jpeg" alt="Framing check" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="c6">
+            <div class="item-body">
+                <strong>Chair &amp; Actor Height Setup</strong>
+                <span class="instruction">Adjust chair height and sitting position for consistent eye-line and posture.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.08.58-chair%20and%20height-0set-actor.jpeg" data-caption="Chair and height set for actor">
+                <img src="production-checklist/production_checklist_07.08.58-chair%20and%20height-0set-actor.jpeg" alt="Chair and height setup" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="c7">
+            <div class="item-body">
+                <strong>Headspace Error — Investigate &amp; Fix</strong>
+                <span class="instruction">If top-of-head is clipped, adjust camera tilt or actor seating position.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.01.09_headspace%20error_find%20out.jpeg" data-caption="Headspace error — find out">
+                <img src="production-checklist/production_checklist_07.01.09_headspace%20error_find%20out.jpeg" alt="Headspace error" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="c8">
+            <div class="item-body">
+                <strong>Correct Framing Final Check</strong>
+                <span class="instruction">Confirm final framing — check headspace, shoulders, and background.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.01.45_correct_framing_check.jpeg" data-caption="Correct framing check">
+                <img src="production-checklist/production_checklist_07.01.45_correct_framing_check.jpeg" alt="Correct framing" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="c9">
+            <div class="item-body">
+                <strong>Head &amp; Hands Final Check</strong>
+                <span class="instruction">Ensure hands and head are both clearly visible and not cropped.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.11.32-head-hands-check.jpeg" data-caption="Head and hands check">
+                <img src="production-checklist/production_checklist_07.11.32-head-hands-check.jpeg" alt="Head and hands check" loading="lazy">
+            </div>
         </div>
     </div>
 
-    <div class="section" style="border-color: var(--accent);">
-        <h2 style="color: var(--accent);">✅ Final Quality Control</h2>
+    <!-- SECTION 4: Audio -->
+    <div class="section">
+        <h2>&#127897;&#65039; Audio Setup</h2>
+
         <div class="item">
-            <input type="checkbox" id="f1">
-            <label for="f1"><strong>Audio Check:</strong> No background noise, vocals are crisp.</label>
+            <input type="checkbox" id="a1">
+            <div class="item-body">
+                <strong>Check XLR Mixer Levels</strong>
+                <span class="instruction">Verify XLR input levels; aim for -12 dB to -6 dB on voice.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.11.49_check_xlr_mix.jpeg" data-caption="Check XLR mix">
+                <img src="production-checklist/production_checklist_06.11.49_check_xlr_mix.jpeg" alt="XLR mixer check" loading="lazy">
+            </div>
         </div>
+
         <div class="item">
-            <input type="checkbox" id="f2">
-            <label for="f2"><strong>Duration:</strong> Video is within the 3-5 minute maximum limit.</label>
+            <input type="checkbox" id="a2">
+            <div class="item-body">
+                <strong>Recheck Replay Buffer Audio</strong>
+                <span class="instruction">Ensure audio is included in the replay buffer output.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.12.28_recheck_Replay_buffer.jpeg" data-caption="Recheck replay buffer">
+                <img src="production-checklist/production_checklist_06.12.28_recheck_Replay_buffer.jpeg" alt="Replay buffer recheck" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="a3">
+            <div class="item-body">
+                <strong>Check Replay Buffer Timeline with Claude</strong>
+                <span class="instruction">Use Claude to review timeline integrity of replay buffer clips.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.13.39_check_Replay_buffer_timeline_with_claude.jpeg" data-caption="Check replay buffer timeline with Claude">
+                <img src="production-checklist/production_checklist_06.13.39_check_Replay_buffer_timeline_with_claude.jpeg" alt="Replay buffer timeline" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="a4">
+            <div class="item-body">
+                <strong>Retrieve Microphone from Boom Arm</strong>
+                <span class="instruction">Position the boom arm mic at the correct distance and angle.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.14.31_get_mic_from_boom_arm.jpeg" data-caption="Get mic from boom arm">
+                <img src="production-checklist/production_checklist_06.14.31_get_mic_from_boom_arm.jpeg" alt="Mic from boom arm" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="a5">
+            <div class="item-body">
+                <strong>Audio Recording Spot-Check</strong>
+                <span class="instruction">Record a test clip; play back to confirm clean, clear audio with no noise.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.21.26-audio-recording-check.jpeg" data-caption="Audio recording check">
+                <img src="production-checklist/production_checklist_07.21.26-audio-recording-check.jpeg" alt="Audio recording check" loading="lazy">
+            </div>
         </div>
     </div>
 
-    <p style="text-align: center; color: #475569; font-size: 0.8rem;">
-        Vebende Academy © 2026 | Engineering the Future
-    </p>
+    <!-- SECTION 5: Prompter & Script -->
+    <div class="section">
+        <h2>&#128221; Prompter &amp; Script</h2>
+
+        <div class="item">
+            <input type="checkbox" id="p1">
+            <div class="item-body">
+                <strong>Use Emojis &amp; Emotions at Start in Prompter</strong>
+                <span class="instruction">Add emotion cues and emojis to the opening lines for energy and engagement.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.24.53_use%20emojis%20_with%20emotions_at%20start_in%20prompter.jpeg" data-caption="Use emojis with emotions at start in prompter">
+                <img src="production-checklist/production_checklist_06.24.53_use%20emojis%20_with%20emotions_at%20start_in%20prompter.jpeg" alt="Emojis in prompter" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="p2">
+            <div class="item-body">
+                <strong>Prompter Shortcuts in Stream Deck</strong>
+                <span class="instruction">Verify scroll speed, pause, and reset shortcuts are mapped on Stream Deck.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.28.36_prompter_short_Cuts_instreamdeck.jpeg" data-caption="Prompter shortcuts in Stream Deck">
+                <img src="production-checklist/production_checklist_06.28.36_prompter_short_Cuts_instreamdeck.jpeg" alt="Prompter shortcuts" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="p3">
+            <div class="item-body">
+                <strong>Duplicate Initial Lines for Easy Location Repeat</strong>
+                <span class="instruction">Copy opening lines at the end so re-takes can start from a quick scroll.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.31.35_dublicate)initial_lines_for_easy_move%20to_location_repeat.jpeg" data-caption="Duplicate initial lines for easy move to location repeat">
+                <img src="production-checklist/production_checklist_06.31.35_dublicate)initial_lines_for_easy_move%20to_location_repeat.jpeg" alt="Duplicate initial lines" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="p4">
+            <div class="item-body">
+                <strong>Increase Prompter Font Size</strong>
+                <span class="instruction">Set font to a comfortable reading size (typically 48-72px).</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.32.12_increase_font_size.jpeg" data-caption="Increase font size">
+                <img src="production-checklist/production_checklist_06.32.12_increase_font_size.jpeg" alt="Increase font size" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="p5">
+            <div class="item-body">
+                <strong>Font Size Verification</strong>
+                <span class="instruction">Stand at recording position and confirm text is clearly readable at a glance.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.42.13_fontsize.jpeg" data-caption="Font size check">
+                <img src="production-checklist/production_checklist_06.42.13_fontsize.jpeg" alt="Font size verification" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="p6">
+            <div class="item-body">
+                <strong>Prompter Font Size Final Check</strong>
+                <span class="instruction">Re-verify font size after any script edits or prompter layout changes.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.44.12_prompteR_font_size_check.jpeg" data-caption="Prompter font size check">
+                <img src="production-checklist/production_checklist_06.44.12_prompteR_font_size_check.jpeg" alt="Prompter font size" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="p7">
+            <div class="item-body">
+                <strong>Automate Prompter via Stream Deck</strong>
+                <span class="instruction">Enable auto-scroll and test hands-free prompter operation through Stream Deck.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.46.39_prompter_stream_deck_automate.jpeg" data-caption="Prompter Stream Deck automate">
+                <img src="production-checklist/production_checklist_06.46.39_prompter_stream_deck_automate.jpeg" alt="Prompter automate" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="p8">
+            <div class="item-body">
+                <strong>Updated Version — Add Prompter to Layout</strong>
+                <span class="instruction">Confirm prompter window is integrated into the updated scene layout.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_06.48.08_updated%20version_add_prompter.jpeg" data-caption="Updated version: add prompter">
+                <img src="production-checklist/production_checklist_06.48.08_updated%20version_add_prompter.jpeg" alt="Updated prompter layout" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="p9">
+            <div class="item-body">
+                <strong>Add Direct Prompter Screen Button</strong>
+                <span class="instruction">Add a direct one-tap Stream Deck button to jump to prompter fullscreen.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.03.45-direct-prompter-screen-button-add.jpeg" data-caption="Direct prompter screen button add">
+                <img src="production-checklist/production_checklist_07.03.45-direct-prompter-screen-button-add.jpeg" alt="Direct prompter button" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="p10">
+            <div class="item-body">
+                <strong>New Version — Prompter Ready</strong>
+                <span class="instruction">Confirm the final prompter version is loaded and scroll-ready.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.09.40-new-version-update-prompter%20ready.jpeg" data-caption="New version update: prompter ready">
+                <img src="production-checklist/production_checklist_07.09.40-new-version-update-prompter%20ready.jpeg" alt="Prompter ready" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 6: Technical Verification -->
+    <div class="section warn">
+        <h2>&#9888;&#65039; Technical Verification (Framerate &amp; Screens)</h2>
+
+        <div class="item">
+            <input type="checkbox" id="t1">
+            <div class="item-body">
+                <strong>FPS Check — 30fps / Green Screen Error</strong>
+                <span class="instruction">Confirm output is 30 fps; resolve green-screen artifact if visible.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.05.43-fps-check-30-error-for-green.jpeg" data-caption="FPS check: 30fps error for green screen">
+                <img src="production-checklist/production_checklist_07.05.43-fps-check-30-error-for-green.jpeg" alt="FPS check green screen" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="t2">
+            <div class="item-body">
+                <strong>Update Framerate in OBS</strong>
+                <span class="instruction">Go to OBS settings &rarr; Video &rarr; set Common FPS to 30 (or project target).</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.06.14-framerate-update.jpeg" data-caption="Framerate update">
+                <img src="production-checklist/production_checklist_07.06.14-framerate-update.jpeg" alt="Framerate update" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="t3">
+            <div class="item-body">
+                <strong>Reset Framerate &amp; Check for Dropped Frames</strong>
+                <span class="instruction">Restart OBS after framerate change; monitor stats for dropped frames.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.07.30-framerate-reset-obs-check-drops.jpeg" data-caption="Framerate reset OBS: check drops">
+                <img src="production-checklist/production_checklist_07.07.30-framerate-reset-obs-check-drops.jpeg" alt="Framerate reset and drops" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="t4">
+            <div class="item-body">
+                <strong>Record and Spot-Check</strong>
+                <span class="instruction">Record 30 seconds and review immediately for framerate and quality issues.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.07.47-record-and-check%20.jpeg" data-caption="Record and check">
+                <img src="production-checklist/production_checklist_07.07.47-record-and-check%20.jpeg" alt="Record and check" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="t5">
+            <div class="item-body">
+                <strong>FPS Multi-Record Check</strong>
+                <span class="instruction">Record multiple short clips and verify FPS consistency across all of them.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.08.51-fps-check-multi-record.jpeg" data-caption="FPS check multi-record">
+                <img src="production-checklist/production_checklist_07.08.51-fps-check-multi-record.jpeg" alt="FPS multi record" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="t6">
+            <div class="item-body">
+                <strong>All Screens Check</strong>
+                <span class="instruction">Verify every monitor is showing the correct content — camera, prompter, OBS.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.10.24-all-screen0-scheck%20.jpeg" data-caption="All screens check">
+                <img src="production-checklist/production_checklist_07.10.24-all-screen0-scheck%20.jpeg" alt="All screens check" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 7: Script Review & Collaboration -->
+    <div class="section">
+        <h2>&#129309; Script Review &amp; Collaboration</h2>
+
+        <div class="item">
+            <input type="checkbox" id="r1">
+            <div class="item-body">
+                <strong>Claude Script Generation &amp; Review</strong>
+                <span class="instruction">Use Claude to generate or refine script content for this session.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.04.51-claude-scrupt-script.jpeg" data-caption="Claude script">
+                <img src="production-checklist/production_checklist_07.04.51-claude-scrupt-script.jpeg" alt="Claude script" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="r2">
+            <div class="item-body">
+                <strong>Script in Action — Dry Run</strong>
+                <span class="instruction">Run through the full script once without recording to check flow and timing.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.05.40-script-in-action.jpeg" data-caption="Script in action">
+                <img src="production-checklist/production_checklist_07.05.40-script-in-action.jpeg" alt="Script in action" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="r3">
+            <div class="item-body">
+                <strong>Share Script with Stakeholders</strong>
+                <span class="instruction">Send the final script link to stakeholders for pre-production sign-off.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.02.00-share-to_stakeholders.jpeg" data-caption="Share to stakeholders">
+                <img src="production-checklist/production_checklist_07.02.00-share-to_stakeholders.jpeg" alt="Share to stakeholders" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="r4">
+            <div class="item-body">
+                <strong>Update Font / Script &amp; Verify with Parties</strong>
+                <span class="instruction">Apply any last-minute font or script changes; confirm with all parties.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.02.42_update_font_script_verify_parties.jpeg" data-caption="Update font / script: verify with parties">
+                <img src="production-checklist/production_checklist_07.02.42_update_font_script_verify_parties.jpeg" alt="Update and verify" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="r5">
+            <div class="item-body">
+                <strong>Dual Verification</strong>
+                <span class="instruction">Two-person review of script and setup before hitting record.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.03.05-dual%20verify.jpeg" data-caption="Dual verify">
+                <img src="production-checklist/production_checklist_07.03.05-dual%20verify.jpeg" alt="Dual verify" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 8: Post-Production -->
+    <div class="section accent">
+        <h2>&#9989; Post-Production &amp; Wrap</h2>
+
+        <div class="item">
+            <input type="checkbox" id="pp1">
+            <div class="item-body">
+                <strong>Upload to Google Drive &amp; Share</strong>
+                <span class="instruction">Upload the final recording to Google Drive and share the link with the team.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.20.23-google-drive-upload-check-share.jpeg" data-caption="Google Drive upload check and share">
+                <img src="production-checklist/production_checklist_07.20.23-google-drive-upload-check-share.jpeg" alt="Google Drive upload" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="pp2">
+            <div class="item-body">
+                <strong>Upload to YouTube (Unlisted)</strong>
+                <span class="instruction">Upload the processed video to YouTube as unlisted for stakeholder review.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.22.34-checkupload-youtube-unlisted.jpeg" data-caption="Check upload YouTube unlisted">
+                <img src="production-checklist/production_checklist_07.22.34-checkupload-youtube-unlisted.jpeg" alt="YouTube upload unlisted" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="pp3">
+            <div class="item-body">
+                <strong>Green Screen Tidy-Up</strong>
+                <span class="instruction">Roll up and store the green screen after filming is complete.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.23.54-greenscreen-tidy-up.jpeg" data-caption="Greenscreen tidy-up">
+                <img src="production-checklist/production_checklist_07.23.54-greenscreen-tidy-up.jpeg" alt="Greenscreen tidy-up" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="pp4">
+            <div class="item-body">
+                <strong>Greenscreen Lighting Tidy-Up</strong>
+                <span class="instruction">Turn off and pack away all green screen lights safely.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.29.16-greenscreen-light-tidy-up.jpeg" data-caption="Greenscreen light tidy-up">
+                <img src="production-checklist/production_checklist_07.29.16-greenscreen-light-tidy-up.jpeg" alt="Greenscreen lights tidy-up" loading="lazy">
+            </div>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="pp5">
+            <div class="item-body">
+                <strong>Main Light &amp; Boom Arm Tidy-Up</strong>
+                <span class="instruction">Switch off key light and store boom arm microphone properly.</span>
+            </div>
+            <div class="thumb-wrap" data-src="production-checklist/production_checklist_07.29.21-mainlight-boom-arm-tidy-up.jpeg" data-caption="Main light and boom arm tidy-up">
+                <img src="production-checklist/production_checklist_07.29.21-mainlight-boom-arm-tidy-up.jpeg" alt="Main light boom arm tidy-up" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+    <p class="footer">Video Production Checklist &bull; Updated 2026 &bull; Click thumbnails to preview steps</p>
 </div>
+
+<script>
+(function() {
+    // ─── Modal ─────────────────────────────────────────────────
+    var overlay  = document.getElementById('modal-overlay');
+    var modalImg = document.getElementById('modal-img');
+    var caption  = document.getElementById('modal-caption');
+    var closeBtn = document.getElementById('modal-close');
+
+    function openModal(src, cap) {
+        modalImg.src = src;
+        modalImg.alt = cap;
+        caption.textContent = cap;
+        overlay.classList.add('active');
+    }
+
+    function closeModal() {
+        overlay.classList.remove('active');
+        modalImg.src = '';
+    }
+
+    document.querySelectorAll('.thumb-wrap').forEach(function(wrap) {
+        wrap.addEventListener('click', function() {
+            openModal(wrap.dataset.src, wrap.dataset.caption || '');
+        });
+    });
+
+    overlay.addEventListener('click', function(e) {
+        if (e.target === overlay) closeModal();
+    });
+    closeBtn.addEventListener('click', closeModal);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // ─── Progress bar ─────────────────────────────────────────
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    var bar        = document.getElementById('progressBar');
+    var lbl        = document.getElementById('progressLabel');
+
+    function updateProgress() {
+        var total   = checkboxes.length;
+        var checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+        var pct     = total ? Math.round((checked / total) * 100) : 0;
+        bar.style.width = pct + '%';
+        lbl.textContent = checked + ' / ' + total + ' tasks completed (' + pct + '%)';
+    }
+
+    checkboxes.forEach(function(cb) {
+        cb.addEventListener('change', updateProgress);
+    });
+
+    updateProgress();
+})();
+</script>
 
 </body>
 </html>
