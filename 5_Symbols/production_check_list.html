@@ -1,1 +1,127 @@
-x
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vebende Academy | Production Checklist</title>
+    <style>
+        :root { --primary: #3b82f6; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #10b981; }
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+        .container { max-width: 800px; margin: auto; }
+        .header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid #334155; padding-bottom: 20px; }
+        .section { background: var(--card); padding: 25px; border-radius: 16px; margin-bottom: 25px; border: 1px solid #334155; }
+        h2 { color: var(--primary); font-size: 1.2rem; text-transform: uppercase; margin-top: 0; display: flex; align-items: center; gap: 10px; }
+        .item { display: flex; align-items: flex-start; margin-bottom: 15px; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.02); }
+        input[type="checkbox"] { width: 22px; height: 22px; margin-right: 15px; cursor: pointer; accent-color: var(--primary); }
+        label { cursor: pointer; flex: 1; }
+        .instruction { display: block; color: #94a3b8; font-size: 0.9rem; margin-top: 5px; }
+        
+        /* Image Placeholder Style */
+        .img-placeholder { 
+            margin: 15px 0; padding: 20px; border: 2px dashed #475569; border-radius: 8px; 
+            text-align: center; background: rgba(15, 23, 42, 0.5); color: #64748b; font-size: 0.8rem;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .img-placeholder::before { content: "🖼️ IMAGE/B-ROLL SLOT"; font-weight: bold; color: var(--primary); }
+
+        input[type="checkbox"]:checked + label { text-decoration: line-through; opacity: 0.4; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Vebende Academy</h1>
+        <p>Production Assistant Technical Checklist</p>
+    </div>
+
+    <div class="section">
+        <h2>🖥️ Interface & Environment</h2>
+        
+        <div class="img-placeholder">
+            [Insert Screenshot: Vebende Academy Register Page - Desktop Full View]
+            <br><em>Ensure all sidebar items are expanded and visible.</em>
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="e1">
+            <label for="e1">
+                <strong>Desktop Mode Verification</strong>
+                <span class="instruction">Verify the site is NOT in mobile view. Left sidebar must be fully expanded.</span>
+            </label>
+        </div>
+        <div class="item">
+            <input type="checkbox" id="e2">
+            <label for="e2">
+                <strong>Sidebar Item Audit</strong>
+                <span class="instruction">Check that Kubernetes, DevOps, and Microservices modules are clearly listed.</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🎙️ Narrative & Script Hooks</h2>
+        
+        <div class="item">
+            <input type="checkbox" id="s1">
+            <label for="s1">
+                <strong>Opening Hook Captured</strong>
+                <span class="instruction">"Are you ready to learn system design, not just coding?"</span>
+            </label>
+        </div>
+
+        <div class="img-placeholder">
+            [Insert B-Roll: Moving Terminal Code / Kubernetes Cluster Dashboard]
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="s2">
+            <label for="s2">
+                <strong>The "Why Vebende" Segment</strong>
+                <span class="instruction">Highlighting 25 years of field experience and the transition from Coder to Architect.</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔌 Hardware & Advanced Tech</h2>
+        
+        <div class="img-placeholder">
+            [Insert Image: Pi-Stream Setup or Raspberry Pi Pico Hardware Close-up]
+        </div>
+
+        <div class="item">
+            <input type="checkbox" id="h1">
+            <label for="h1">
+                <strong>Pi-Stream / Pico Visibility</strong>
+                <span class="instruction">Ensure hardware units are in frame when mentioning "Real-world production standards."</span>
+            </label>
+        </div>
+        <div class="item">
+            <input type="checkbox" id="h2">
+            <label for="h2">
+                <strong>Multi-Monitor Setup</strong>
+                <span class="instruction">Capture wide shot of the engineer's workspace (Architect's desk).</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="section" style="border-color: var(--accent);">
+        <h2 style="color: var(--accent);">✅ Final Quality Control</h2>
+        <div class="item">
+            <input type="checkbox" id="f1">
+            <label for="f1"><strong>Audio Check:</strong> No background noise, vocals are crisp.</label>
+        </div>
+        <div class="item">
+            <input type="checkbox" id="f2">
+            <label for="f2"><strong>Duration:</strong> Video is within the 3-5 minute maximum limit.</label>
+        </div>
+    </div>
+
+    <p style="text-align: center; color: #475569; font-size: 0.8rem;">
+        Vebende Academy © 2026 | Engineering the Future
+    </p>
+</div>
+
+</body>
+</html>
