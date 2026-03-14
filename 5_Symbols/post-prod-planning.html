@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post Production Command Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --surface: #111116;
+    --border: #1e1e28;
+    --text: #e8e8f0;
+    --muted: #5a5a72;
+    --accent-green: #4eff91;
+    --accent-red: #ff4e6a;
+    --accent-amber: #ffb84e;
+    --accent-blue: #4e9fff;
+    --accent-purple: #b44eff;
+    --btn-idle: #16161e;
+    --btn-active: #1e1e2a;
+    --btn-done: #0d1f14;
+    --done-border: #1a4028;
+    --phase-h: 22px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  header {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    background: linear-gradient(180deg, #0d0d14 0%, transparent 100%);
+  }
+
+  .header-left h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .header-left h1 span { color: var(--accent-green); }
+  .header-left p {
+    color: var(--muted);
+    font-size: 0.7rem;
+    margin-top: 6px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .progress-ring-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .progress-ring-wrap svg { transform: rotate(-90deg); }
+  .progress-ring-bg { fill: none; stroke: var(--border); stroke-width: 3; }
+  .progress-ring-fill {
+    fill: none;
+    stroke: var(--accent-green);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 150.8;
+    stroke-dashoffset: 150.8;
+    transition: stroke-dashoffset 0.6s ease;
+  }
+  .progress-ring-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .stat {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .stat strong {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .reset-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 3px;
+  }
+  .reset-btn:hover { border-color: var(--accent-red); color: var(--accent-red); }
+
+  /* Date display */
+  .date-bar {
+    padding: 8px 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 20px;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .date-bar span { color: var(--text); }
+
+  /* Main layout */
+  main {
+    padding: 32px 40px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Phase section */
+  .phase {
+    margin-bottom: 40px;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .phase-num {
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    border: 1px solid var(--border);
+    padding: 3px 7px;
+    border-radius: 2px;
+  }
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .phase-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .phase-bar {
+    width: 80px;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .phase-bar-fill {
+    height: 100%;
+    background: var(--accent-green);
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  /* Deck grid */
+  .deck {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 110px);
+    gap: 8px;
+  }
+
+  /* Button card */
+  .btn-card {
+    width: 110px;
+    height: 110px;
+    background: var(--btn-idle);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    user-select: none;
+    overflow: hidden;
+    padding: 10px 8px;
+    text-align: center;
+  }
+
+  .btn-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .btn-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.12);
+    background: var(--btn-active);
+  }
+
+  .btn-card:active { transform: scale(0.96); }
+
+  .btn-card.done {
+    background: var(--btn-done);
+    border-color: var(--done-border);
+  }
+  .btn-card.done .btn-icon { opacity: 0.5; filter: saturate(0.3); }
+  .btn-card.done .btn-label { color: var(--muted); }
+  .btn-card.done::after {
+    content: '✓';
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    color: var(--accent-green);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .btn-icon {
+    font-size: 2rem;
+    line-height: 1;
+    transition: transform 0.2s;
+  }
+  .btn-card:hover .btn-icon { transform: scale(1.15); }
+
+  .btn-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .btn-sub {
+    font-size: 0.52rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+  }
+
+  /* Color variants */
+  .c-green { border-color: rgba(78,255,145,0.25); }
+  .c-green:hover { border-color: rgba(78,255,145,0.5); box-shadow: 0 8px 24px rgba(78,255,145,0.1); }
+  .c-green .btn-icon { filter: drop-shadow(0 0 8px rgba(78,255,145,0.4)); }
+
+  .c-red { border-color: rgba(255,78,106,0.25); }
+  .c-red:hover { border-color: rgba(255,78,106,0.5); box-shadow: 0 8px 24px rgba(255,78,106,0.1); }
+  .c-red .btn-icon { filter: drop-shadow(0 0 8px rgba(255,78,106,0.4)); }
+
+  .c-amber { border-color: rgba(255,184,78,0.25); }
+  .c-amber:hover { border-color: rgba(255,184,78,0.5); box-shadow: 0 8px 24px rgba(255,184,78,0.1); }
+  .c-amber .btn-icon { filter: drop-shadow(0 0 8px rgba(255,184,78,0.4)); }
+
+  .c-blue { border-color: rgba(78,159,255,0.25); }
+  .c-blue:hover { border-color: rgba(78,159,255,0.5); box-shadow: 0 8px 24px rgba(78,159,255,0.1); }
+  .c-blue .btn-icon { filter: drop-shadow(0 0 8px rgba(78,159,255,0.4)); }
+
+  .c-purple { border-color: rgba(180,78,255,0.25); }
+  .c-purple:hover { border-color: rgba(180,78,255,0.5); box-shadow: 0 8px 24px rgba(180,78,255,0.1); }
+  .c-purple .btn-icon { filter: drop-shadow(0 0 8px rgba(180,78,255,0.4)); }
+
+  /* Notes panel */
+  .notes-section {
+    margin-top: 48px;
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+  }
+  .notes-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .notes-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 16px;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  .notes-input:focus { border-color: rgba(78,255,145,0.3); }
+  .notes-input::placeholder { color: var(--muted); }
+
+  /* Tooltip */
+  .btn-card[data-tip]:hover::before {
+    display: none;
+  }
+  .tooltip {
+    position: fixed;
+    background: #1a1a24;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.62rem;
+    padding: 6px 10px;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.15s;
+    max-width: 200px;
+    line-height: 1.5;
+    letter-spacing: 0.03em;
+  }
+  .tooltip.visible { opacity: 1; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Pulse animation for active items */
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(78,255,145,0); }
+    50% { box-shadow: 0 0 0 4px rgba(78,255,145,0.08); }
+  }
+  .active-glow { animation: pulse-border 3s infinite; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .phase { animation: fadeIn 0.4s ease both; }
+  .phase:nth-child(2) { animation-delay: 0.08s; }
+  .phase:nth-child(3) { animation-delay: 0.16s; }
+  .phase:nth-child(4) { animation-delay: 0.24s; }
+  .phase:nth-child(5) { animation-delay: 0.32s; }
+</style>
+</head>
+<body>
+
+<div class="tooltip" id="tooltip"></div>
+
+<header>
+  <div class="header-left">
+    <h1>POST PROD <span>COMMAND DECK</span></h1>
+    <p>Stream Deck Workflow Checklist · DeliveryPilot</p>
+  </div>
+  <div class="header-right">
+    <div class="stats">
+      <div class="stat"><strong id="done-count">0</strong> completed</div>
+      <div class="stat"><strong id="left-count">0</strong> remaining</div>
+    </div>
+    <div class="progress-ring-wrap">
+      <svg width="48" height="48" viewBox="0 0 48 48">
+        <circle class="progress-ring-bg" cx="24" cy="24" r="20"/>
+        <circle class="progress-ring-fill" id="ring" cx="24" cy="24" r="20"/>
+      </svg>
+      <span class="progress-ring-label" id="pct">0%</span>
+    </div>
+    <button class="reset-btn" onclick="resetAll()">↺ RESET</button>
+  </div>
+</header>
+
+<div class="date-bar">
+  <div>SESSION <span id="date-display">—</span></div>
+  <div>LAST SAVE <span id="save-time">—</span></div>
+</div>
+
+<main>
+
+  <!-- PHASE 1: OBSIDIAN PLANNING -->
+  <div class="phase" data-phase="1">
+    <div class="phase-header">
+      <span class="phase-num">01</span>
+      <span class="phase-title" style="color:var(--accent-purple)">Obsidian · Planning</span>
+      <div class="phase-line"></div>
+      <div class="phase-bar"><div class="phase-bar-fill" id="bar-1"></div></div>
+    </div>
+    <div class="deck">
+      <div class="btn-card c-purple active-glow" data-id="obs-open" data-tip="Open Obsidian vault for this video project">
+        <div class="btn-icon">🪨</div>
+        <div class="btn-label">Open Obsidian</div>
+        <div class="btn-sub">vault</div>
+      </div>
+      <div class="btn-card c-purple" data-id="obs-note" data-tip="Create or open the video production note for this episode">
+        <div class="btn-icon">📝</div>
+        <div class="btn-label">Episode Note</div>
+        <div class="btn-sub">new/open</div>
+      </div>
+      <div class="btn-card c-purple" data-id="obs-script" data-tip="Paste or write the full video script in Obsidian">
+        <div class="btn-icon">📜</div>
+        <div class="btn-label">Script Draft</div>
+        <div class="btn-sub">paste / write</div>
+      </div>
+      <div class="btn-card c-purple" data-id="obs-outline" data-tip="Build the chapter outline — timestamps and section names">
+        <div class="btn-icon">🗂️</div>
+        <div class="btn-label">Chapter Map</div>
+        <div class="btn-sub">outline</div>
+      </div>
+      <div class="btn-card c-purple" data-id="obs-tags" data-tip="Add tags, links and metadata to the Obsidian note">
+        <div class="btn-icon">🏷️</div>
+        <div class="btn-label">Tags & Meta</div>
+        <div class="btn-sub">PARA links</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2: GEMINI IMAGE GENERATION -->
+  <div class="phase" data-phase="2">
+    <div class="phase-header">
+      <span class="phase-num">02</span>
+      <span class="phase-title" style="color:var(--accent-blue)">Gemini · Images</span>
+      <div class="phase-line"></div>
+      <div class="phase-bar"><div class="phase-bar-fill" id="bar-2"></div></div>
+    </div>
+    <div class="deck">
+      <div class="btn-card c-blue" data-id="gem-open" data-tip="Open Gemini in browser for image generation session">
+        <div class="btn-icon">♊</div>
+        <div class="btn-label">Open Gemini</div>
+        <div class="btn-sub">browser</div>
+      </div>
+      <div class="btn-card c-blue" data-id="gem-prompt" data-tip="Prepare image prompt from script — paste into Gemini">
+        <div class="btn-icon">✍️</div>
+        <div class="btn-label">Image Prompts</div>
+        <div class="btn-sub">from script</div>
+      </div>
+      <div class="btn-card c-blue" data-id="gem-gen" data-tip="Generate all scene images for the video in Gemini">
+        <div class="btn-icon">🖼️</div>
+        <div class="btn-label">Generate Imgs</div>
+        <div class="btn-sub">all scenes</div>
+      </div>
+      <div class="btn-card c-blue" data-id="gem-thumb" data-tip="Generate thumbnail candidates — 3 options minimum">
+        <div class="btn-icon">🎨</div>
+        <div class="btn-label">Thumbnail</div>
+        <div class="btn-sub">3+ options</div>
+      </div>
+      <div class="btn-card c-blue" data-id="gem-dl" data-tip="Download all generated images to project folder">
+        <div class="btn-icon">⬇️</div>
+        <div class="btn-label">Downloads</div>
+        <div class="btn-sub">save to proj</div>
+      </div>
+      <div class="btn-card c-blue" data-id="gem-sort" data-tip="Sort images into /scenes /thumbs subfolders in project dir">
+        <div class="btn-icon">📁</div>
+        <div class="btn-label">Sort Assets</div>
+        <div class="btn-sub">/scenes /thumbs</div>
+      </div>
+      <div class="btn-card c-blue" data-id="script2img" data-tip="Run Script-to-Image workflow — convert script lines to image prompts automatically">
+        <div class="btn-icon">🔁</div>
+        <div class="btn-label">Script→Image</div>
+        <div class="btn-sub">auto-pipeline</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3: ELEVENLABS AUDIO -->
+  <div class="phase" data-phase="3">
+    <div class="phase-header">
+      <span class="phase-num">03</span>
+      <span class="phase-title" style="color:var(--accent-amber)">ElevenLabs · Audio</span>
+      <div class="phase-line"></div>
+      <div class="phase-bar"><div class="phase-bar-fill" id="bar-3"></div></div>
+    </div>
+    <div class="deck">
+      <div class="btn-card c-amber" data-id="el-open" data-tip="Open ElevenLabs and select your voice profile">
+        <div class="btn-icon">🎙️</div>
+        <div class="btn-label">ElevenLabs</div>
+        <div class="btn-sub">open · voice</div>
+      </div>
+      <div class="btn-card c-amber" data-id="el-paste" data-tip="Paste cleaned script sections into ElevenLabs TTS editor">
+        <div class="btn-icon">📋</div>
+        <div class="btn-label">Paste Script</div>
+        <div class="btn-sub">section by sec</div>
+      </div>
+      <div class="btn-card c-amber" data-id="el-gen" data-tip="Generate voiceover audio for all script sections">
+        <div class="btn-icon">🔊</div>
+        <div class="btn-label">Generate VO</div>
+        <div class="btn-sub">all sections</div>
+      </div>
+      <div class="btn-card c-amber" data-id="el-listen" data-tip="Listen to each audio file and mark approval or re-generate">
+        <div class="btn-icon">🎧</div>
+        <div class="btn-label">Listen & QA</div>
+        <div class="btn-sub">approve/regen</div>
+      </div>
+      <div class="btn-card c-amber" data-id="el-dl" data-tip="Download all approved audio files as MP3 to /audio folder">
+        <div class="btn-icon">💾</div>
+        <div class="btn-label">Export Audio</div>
+        <div class="btn-sub">mp3 → /audio</div>
+      </div>
+      <div class="btn-card c-amber" data-id="el-name" data-tip="Rename audio files to match scene/chapter numbering (01-intro.mp3 etc.)">
+        <div class="btn-icon">🔡</div>
+        <div class="btn-label">Rename Files</div>
+        <div class="btn-sub">01-intro…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 4: DAVINCI / EDIT -->
+  <div class="phase" data-phase="4">
+    <div class="phase-header">
+      <span class="phase-num">04</span>
+      <span class="phase-title" style="color:var(--accent-red)">DaVinci · Edit</span>
+      <div class="phase-line"></div>
+      <div class="phase-bar"><div class="phase-bar-fill" id="bar-4"></div></div>
+    </div>
+    <div class="deck">
+      <div class="btn-card c-red" data-id="dv-proj" data-tip="Create new DaVinci Resolve project, set timeline settings (1080p/4K, 25fps)">
+        <div class="btn-icon">🎬</div>
+        <div class="btn-label">New Project</div>
+        <div class="btn-sub">resolve setup</div>
+      </div>
+      <div class="btn-card c-red" data-id="dv-import" data-tip="Import all images and audio files into DaVinci media pool">
+        <div class="btn-icon">📥</div>
+        <div class="btn-label">Import Media</div>
+        <div class="btn-sub">pool → bins</div>
+      </div>
+      <div class="btn-card c-red" data-id="dv-timeline" data-tip="Build timeline — place audio first, then sync images to audio chapters">
+        <div class="btn-icon">⏱️</div>
+        <div class="btn-label">Build Timeline</div>
+        <div class="btn-sub">audio → images</div>
+      </div>
+      <div class="btn-card c-red" data-id="dv-lower" data-tip="Add lower thirds and chapter text overlays using Lower Thirds Generator">
+        <div class="btn-icon">📺</div>
+        <div class="btn-label">Lower Thirds</div>
+        <div class="btn-sub">text overlays</div>
+      </div>
+      <div class="btn-card c-red" data-id="dv-sfx" data-tip="Apply SFX — transitions, whooshes, and sound effects via SFX generator">
+        <div class="btn-icon">🎵</div>
+        <div class="btn-label">SFX Layer</div>
+        <div class="btn-sub">transitions</div>
+      </div>
+      <div class="btn-card c-red" data-id="dv-color" data-tip="Apply color grading — match dark cinematic palette across all clips">
+        <div class="btn-icon">🎨</div>
+        <div class="btn-label">Color Grade</div>
+        <div class="btn-sub">cinematic</div>
+      </div>
+      <div class="btn-card c-red" data-id="dv-export" data-tip="Export final render — H.264, YouTube preset, max quality">
+        <div class="btn-icon">📤</div>
+        <div class="btn-label">Export Render</div>
+        <div class="btn-sub">h264 · yt</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 5: PUBLISH -->
+  <div class="phase" data-phase="5">
+    <div class="phase-header">
+      <span class="phase-num">05</span>
+      <span class="phase-title" style="color:var(--accent-green)">Publish · Deploy</span>
+      <div class="phase-line"></div>
+      <div class="phase-bar"><div class="phase-bar-fill" id="bar-5"></div></div>
+    </div>
+    <div class="deck">
+      <div class="btn-card c-green" data-id="pub-thumb" data-tip="Select final thumbnail, add text overlay in Canva or DaVinci">
+        <div class="btn-icon">🖼️</div>
+        <div class="btn-label">Final Thumb</div>
+        <div class="btn-sub">select + text</div>
+      </div>
+      <div class="btn-card c-green" data-id="pub-title" data-tip="Write YouTube title, description and tags — paste from Obsidian note">
+        <div class="btn-icon">📝</div>
+        <div class="btn-label">Title & Desc</div>
+        <div class="btn-sub">yt metadata</div>
+      </div>
+      <div class="btn-card c-green" data-id="pub-chapters" data-tip="Add chapter timestamps in YouTube description from Obsidian chapter map">
+        <div class="btn-icon">📖</div>
+        <div class="btn-label">YT Chapters</div>
+        <div class="btn-sub">timestamps</div>
+      </div>
+      <div class="btn-card c-green" data-id="pub-upload" data-tip="Upload video to YouTube Studio — set visibility to Unlisted first for review">
+        <div class="btn-icon">⬆️</div>
+        <div class="btn-label">Upload YT</div>
+        <div class="btn-sub">unlisted first</div>
+      </div>
+      <div class="btn-card c-green" data-id="pub-obs" data-tip="Update Obsidian note with YouTube link, publish date and final stats">
+        <div class="btn-icon">🔗</div>
+        <div class="btn-label">Log in Obsidian</div>
+        <div class="btn-sub">yt link + date</div>
+      </div>
+      <div class="btn-card c-green" data-id="pub-publish" data-tip="Set video to Public — notify community, post to socials">
+        <div class="btn-icon">🚀</div>
+        <div class="btn-label">GO LIVE</div>
+        <div class="btn-sub">publish!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="notes-section">
+    <div class="notes-title">// Session Notes</div>
+    <textarea class="notes-input" id="notes" placeholder="Add session notes, blockers, ideas here…"></textarea>
+  </div>
+
+</main>
+
+<footer>
+  POST PROD COMMAND DECK · DELIVERYPILOT.NET · GITHUB PAGES CHECKLIST
+</footer>
+
+<script>
+  // State
+  let state = JSON.parse(localStorage.getItem('ppcd-state') || '{}');
+  let notes = localStorage.getItem('ppcd-notes') || '';
+
+  // Tooltip
+  const tooltip = document.getElementById('tooltip');
+  document.querySelectorAll('.btn-card[data-tip]').forEach(card => {
+    card.addEventListener('mouseenter', e => {
+      tooltip.textContent = card.getAttribute('data-tip');
+      tooltip.classList.add('visible');
+    });
+    card.addEventListener('mousemove', e => {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    });
+    card.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
+    });
+  });
+
+  // Click toggle
+  document.querySelectorAll('.btn-card').forEach(card => {
+    const id = card.dataset.id;
+    if (state[id]) card.classList.add('done');
+
+    card.addEventListener('click', () => {
+      state[id] = !state[id];
+      card.classList.toggle('done', state[id]);
+      save();
+      updateStats();
+    });
+  });
+
+  // Notes
+  const notesEl = document.getElementById('notes');
+  notesEl.value = notes;
+  notesEl.addEventListener('input', () => {
+    localStorage.setItem('ppcd-notes', notesEl.value);
+    document.getElementById('save-time').textContent = new Date().toLocaleTimeString();
+  });
+
+  function save() {
+    localStorage.setItem('ppcd-state', JSON.stringify(state));
+    document.getElementById('save-time').textContent = new Date().toLocaleTimeString();
+  }
+
+  function updateStats() {
+    const all = document.querySelectorAll('.btn-card');
+    const done = document.querySelectorAll('.btn-card.done');
+    const total = all.length;
+    const doneCount = done.length;
+    const pct = total ? Math.round((doneCount / total) * 100) : 0;
+
+    document.getElementById('done-count').textContent = doneCount;
+    document.getElementById('left-count').textContent = total - doneCount;
+    document.getElementById('pct').textContent = pct + '%';
+
+    // Ring
+    const circ = 150.8;
+    document.getElementById('ring').style.strokeDashoffset = circ - (circ * pct / 100);
+
+    // Phase bars
+    for (let p = 1; p <= 5; p++) {
+      const phase = document.querySelector(`[data-phase="${p}"]`);
+      if (!phase) continue;
+      const pCards = phase.querySelectorAll('.btn-card');
+      const pDone = phase.querySelectorAll('.btn-card.done');
+      const pPct = pCards.length ? Math.round((pDone.length / pCards.length) * 100) : 0;
+      const bar = document.getElementById(`bar-${p}`);
+      if (bar) bar.style.width = pPct + '%';
+    }
+  }
+
+  function resetAll() {
+    if (!confirm('Reset all checkmarks for this session?')) return;
+    state = {};
+    document.querySelectorAll('.btn-card').forEach(c => c.classList.remove('done'));
+    localStorage.removeItem('ppcd-state');
+    updateStats();
+  }
+
+  // Date
+  const now = new Date();
+  document.getElementById('date-display').textContent = now.toLocaleDateString('en-GB', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+
+  // Init
+  updateStats();
+</script>
+</body>
+</html>
