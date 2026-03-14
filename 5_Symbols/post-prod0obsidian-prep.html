@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeliveryPilot · Post-Production Shot Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0e;
+    --surface: #0d1117;
+    --surface2: #161b22;
+    --surface3: #1c2330;
+    --border: #21262d;
+    --border-bright: #30363d;
+    --accent: #f0883e;
+    --accent2: #58a6ff;
+    --accent3: #3fb950;
+    --accent4: #d2a8ff;
+    --accent-dim: rgba(240,136,62,0.12);
+    --accent2-dim: rgba(88,166,255,0.10);
+    --text: #e6edf3;
+    --text-muted: #7d8590;
+    --text-dim: #484f58;
+    --danger: #f85149;
+    --warn: #d29922;
+    --radius: 6px;
+    --radius-lg: 12px;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+  }
+  .logo span { color: var(--text-muted); font-weight: 400; }
+  .header-tag {
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+  .header-actions { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .btn {
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    color: var(--text);
+    padding: 6px 14px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
+  .btn-primary:hover { background: #e07030; border-color: #e07030; color: #000; }
+  .btn-danger { border-color: #f8514960; }
+  .btn-danger:hover { border-color: var(--danger); color: var(--danger); }
+  .btn-gemini {
+    background: linear-gradient(135deg, #4285f4 0%, #9b4dca 50%, #ea4335 100%);
+    border: none;
+    color: #fff;
+    font-weight: 700;
+  }
+  .btn-gemini:hover { opacity: 0.88; color: #fff; }
+
+  /* ── LAYOUT ── */
+  .app { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 56px); }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .sidebar-section {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .drop-zone {
+    border: 2px dashed var(--border-bright);
+    border-radius: var(--radius-lg);
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+  }
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .drop-zone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .drop-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+  .drop-label { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+  .drop-label strong { color: var(--accent); }
+
+  .form-row { margin-bottom: 10px; }
+  .form-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+  }
+  input[type=text], input[type=number], textarea, select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 7px 10px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  input[type=text]:focus, input[type=number]:focus, textarea:focus, select:focus {
+    border-color: var(--accent2);
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  select option { background: var(--surface2); }
+
+  .segment-config {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* audio info panel */
+  .audio-info {
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    display: none;
+  }
+  .audio-info.visible { display: block; }
+  .audio-info-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+  .audio-info-row:last-child { margin-bottom: 0; }
+  .ai-label { color: var(--text-muted); }
+  .ai-value { font-family: var(--mono); color: var(--accent); font-size: 11px; }
+
+  /* waveform / mini player */
+  .mini-player {
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    display: none;
+    gap: 10px;
+    align-items: center;
+  }
+  .mini-player.visible { display: flex; }
+  .play-btn {
+    width: 32px; height: 32px;
+    background: var(--accent);
+    border: none;
+    border-radius: 50%;
+    color: #000;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .15s;
+  }
+  .play-btn:hover { background: #e07030; }
+  .player-track { flex: 1; }
+  .player-bar {
+    height: 4px;
+    background: var(--border-bright);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    margin-top: 4px;
+  }
+  .player-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 0%;
+    transition: width .1s;
+  }
+  .player-time {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3px;
+  }
+
+  /* gemini panel */
+  .gemini-panel { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .gemini-key-row { display: flex; gap: 6px; }
+  .gemini-key-row input { flex: 1; }
+  .gemini-key-row .btn { flex-shrink: 0; padding: 7px 10px; }
+
+  /* stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-val {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    display: block;
+  }
+  .stat-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.5px; }
+
+  /* sidebar scroll area */
+  .sidebar-bottom { flex: 1; overflow-y: auto; padding: 12px 16px; }
+  .obsidian-export-preview {
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent3);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .main-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-wrap: wrap;
+  }
+  .toolbar-group { display: flex; gap: 6px; align-items: center; }
+  .toolbar-sep {
+    width: 1px;
+    height: 22px;
+    background: var(--border);
+  }
+  .view-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+  .segments-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* ── SEGMENT CARD ── */
+  .segment {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+    transition: border-color .15s;
+    position: relative;
+  }
+  .segment:hover { border-color: var(--border-bright); }
+  .segment.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-dim); }
+  .segment.has-issue { border-color: var(--warn); }
+
+  .seg-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px 10px 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .seg-num {
+    width: 28px; height: 28px;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .segment.active .seg-num { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+  .seg-tc {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent2);
+    min-width: 90px;
+  }
+  .seg-transcript-preview {
+    flex: 1;
+    font-size: 13px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .seg-badges { display: flex; gap: 4px; align-items: center; flex-shrink: 0; }
+  .badge {
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    font-family: var(--mono);
+  }
+  .badge-img { background: rgba(88,166,255,.15); color: var(--accent2); }
+  .badge-shot { background: rgba(63,185,80,.15); color: var(--accent3); }
+  .badge-ai { background: rgba(210,168,255,.15); color: var(--accent4); }
+  .badge-sep { background: rgba(240,136,62,.15); color: var(--accent); }
+
+  .seg-mini-play {
+    width: 26px; height: 26px;
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    border-radius: 50%;
+    color: var(--text-muted);
+    font-size: 10px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
+  .seg-mini-play:hover, .seg-mini-play.playing {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
+  .seg-collapse-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 4px;
+    transition: color .15s;
+    flex-shrink: 0;
+  }
+  .seg-collapse-btn:hover { color: var(--text); }
+
+  .seg-body {
+    padding: 0 14px 14px 14px;
+    display: grid;
+    gap: 10px;
+  }
+  .seg-body.collapsed { display: none; }
+
+  /* transcript edit */
+  .transcript-edit {
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 8px 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    resize: vertical;
+    min-height: 54px;
+    width: 100%;
+  }
+  .transcript-edit:focus { border-color: var(--accent2); outline: none; }
+
+  /* shot type row */
+  .shot-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* visual slot */
+  .visual-slots { display: flex; flex-direction: column; gap: 8px; }
+  .visual-slot {
+    background: var(--surface2);
+    border: 1px dashed var(--border-bright);
+    border-radius: var(--radius);
+    padding: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    transition: border-color .15s;
+  }
+  .visual-slot:hover { border-color: var(--accent2); }
+  .visual-slot-thumb {
+    width: 72px; height: 48px;
+    background: var(--surface3);
+    border-radius: 4px;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .visual-slot-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .visual-slot-thumb .thumb-placeholder { font-size: 18px; color: var(--text-dim); }
+  .visual-slot-thumb input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; padding: 0;
+  }
+  .visual-slot-info { flex: 1; }
+  .visual-slot-type-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: center; }
+  .type-chip {
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--border-bright);
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .12s;
+    font-family: var(--mono);
+    color: var(--text-muted);
+  }
+  .type-chip.active-broll { background: rgba(88,166,255,.2); border-color: var(--accent2); color: var(--accent2); }
+  .type-chip.active-screen { background: rgba(63,185,80,.2); border-color: var(--accent3); color: var(--accent3); }
+  .type-chip.active-talking { background: rgba(240,136,62,.2); border-color: var(--accent); color: var(--accent); }
+  .type-chip.active-gen { background: rgba(210,168,255,.2); border-color: var(--accent4); color: var(--accent4); }
+  .visual-slot-notes {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 2px 0;
+    outline: none;
+  }
+  .visual-slot-notes:focus { border-color: var(--accent2); color: var(--text); }
+  .visual-slot-remove {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px;
+    transition: color .12s;
+    flex-shrink: 0;
+  }
+  .visual-slot-remove:hover { color: var(--danger); }
+
+  .add-visual-btn {
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    color: var(--text-dim);
+    font-family: var(--sans);
+    font-size: 12px;
+    padding: 6px 10px;
+    cursor: pointer;
+    width: 100%;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+  }
+  .add-visual-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  /* ai shot desc */
+  .ai-shot-box {
+    background: rgba(210,168,255,.05);
+    border: 1px solid rgba(210,168,255,.2);
+    border-radius: var(--radius);
+    padding: 8px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent4);
+    line-height: 1.6;
+    display: none;
+    white-space: pre-wrap;
+  }
+  .ai-shot-box.visible { display: block; }
+
+  /* notes */
+  .seg-notes-row { display: flex; gap: 6px; }
+  .seg-notes-row input { flex: 1; }
+
+  /* separator */
+  .separator-widget {
+    position: relative;
+    margin: 4px 0 8px;
+  }
+  .separator-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .sep-hr {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent), transparent);
+    opacity: 0.5;
+  }
+  .sep-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── BETWEEN SEGMENTS: ADD SEPARATOR ── */
+  .inter-segment {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 6px;
+    margin: -6px 0;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+  .inter-segment:hover { opacity: 1; }
+  .inter-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-dim);
+    font-size: 11px;
+    padding: 2px 10px;
+    cursor: pointer;
+    transition: all .12s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--mono);
+  }
+  .inter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .inter-line { flex: 1; height: 1px; background: var(--border); }
+
+  /* ── GEMINI LOADING ── */
+  .gemini-loading {
+    display: inline-flex;
+    gap: 3px;
+    align-items: center;
+  }
+  .gemini-loading span {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    animation: pulse 1.2s infinite;
+  }
+  .gemini-loading span:nth-child(1) { background: #4285f4; animation-delay: 0s; }
+  .gemini-loading span:nth-child(2) { background: #9b4dca; animation-delay: .2s; }
+  .gemini-loading span:nth-child(3) { background: #ea4335; animation-delay: .4s; }
+  @keyframes pulse { 0%,80%,100%{transform:scale(0.6);opacity:.4} 40%{transform:scale(1);opacity:1} }
+
+  /* empty state */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-align: center;
+    color: var(--text-muted);
+    gap: 14px;
+    padding: 40px;
+  }
+  .empty-icon { font-size: 48px; opacity: 0.4; }
+  .empty-title { font-size: 20px; font-weight: 700; color: var(--text-dim); }
+  .empty-sub { font-size: 13px; max-width: 320px; line-height: 1.6; }
+
+  /* ── SHOTLIST EXPORT MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.8);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 780px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 10px;
+  }
+  .modal-title { font-size: 16px; font-weight: 700; flex: 1; }
+  .modal-body { flex: 1; overflow-y: auto; padding: 20px; }
+  .modal-footer {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .export-content {
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+  /* progress ring for audio load */
+  .progress-ring {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    z-index: 10;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .ring-anim {
+    width: 32px; height: 32px;
+    border: 3px solid var(--border-bright);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* toast */
+  #toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-size: 13px;
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all .25s;
+    max-width: 320px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.success { border-color: var(--accent3); color: var(--accent3); }
+  #toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* OBSIDIAN COPY */
+  .obsidian-block {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent3);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 10px 12px;
+    margin-top: 8px;
+  }
+  .obsidian-block-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .obsidian-copy-btn {
+    background: none;
+    border: 1px solid var(--accent3);
+    border-radius: 4px;
+    color: var(--accent3);
+    font-size: 10px;
+    padding: 1px 7px;
+    cursor: pointer;
+    font-family: var(--mono);
+  }
+  .obsidian-copy-btn:hover { background: rgba(63,185,80,.1); }
+  .obsidian-code {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+
+  /* gemini batch btn glow */
+  @keyframes glow {
+    0%,100% { box-shadow: 0 0 8px rgba(210,168,255,.3); }
+    50% { box-shadow: 0 0 20px rgba(210,168,255,.7); }
+  }
+  .btn-gemini.processing { animation: glow 1.5s infinite; }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">DeliveryPilot <span>· Shot Planner</span></div>
+  <div class="header-tag">Post-Production</div>
+  <div class="header-tag">ElevenLabs → Obsidian → DaVinci</div>
+  <div class="header-actions">
+    <button class="btn" onclick="clearAll()">🗑 Clear</button>
+    <button class="btn" onclick="openExportModal('obsidian')">📋 Copy for Obsidian</button>
+    <button class="btn btn-primary" onclick="openExportModal('shotlist')">🎬 Export Shot List</button>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Audio Import -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">1 · Import ElevenLabs Audio</div>
+      <div class="drop-zone" id="dropZone">
+        <input type="file" accept="audio/*" id="audioInput" onchange="handleAudioFile(this.files[0])">
+        <span class="drop-icon">🎙️</span>
+        <div class="drop-label">Drop <strong>.mp3 / .wav</strong> here<br>or click to browse</div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="mini-player" id="miniPlayer">
+          <button class="play-btn" id="globalPlayBtn" onclick="toggleGlobalPlay()">▶</button>
+          <div class="player-track">
+            <div id="audioFileName" style="font-size:11px;color:var(--text-muted);margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+            <div class="player-bar" onclick="seekAudio(event)">
+              <div class="player-fill" id="playerFill"></div>
+            </div>
+            <div class="player-time">
+              <span id="currentTime">0:00</span>
+              <span id="totalTime">0:00</span>
+            </div>
+          </div>
+        </div>
+        <div class="audio-info" id="audioInfo">
+          <div class="audio-info-row"><span class="ai-label">Duration</span><span class="ai-value" id="audioDur">–</span></div>
+          <div class="audio-info-row"><span class="ai-label">Segments (16s)</span><span class="ai-value" id="audioSegs">–</span></div>
+          <div class="audio-info-row"><span class="ai-label">Est. visuals needed</span><span class="ai-value" id="audioVisuals">–</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Segment Settings -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">2 · Segment Settings</div>
+      <div class="segment-config">
+        <div class="form-row">
+          <label class="form-label">Segment Length (s)</label>
+          <input type="number" id="segLen" value="16" min="4" max="60" onchange="recomputeStats()">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Overlap (s)</label>
+          <input type="number" id="segOverlap" value="0" min="0" max="5">
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Project / Episode Title</label>
+        <input type="text" id="projectTitle" placeholder="e.g. AI Skills Gap – Ep 12">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Transcript / Script (optional)</label>
+        <textarea id="transcriptInput" placeholder="Paste full transcript here to auto-populate segment text…"></textarea>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="buildSegments()">⚡ Build Segments</button>
+    </div>
+
+    <!-- Gemini AI -->
+    <div class="gemini-panel">
+      <div class="sidebar-title">3 · Gemini AI Shot Generator</div>
+      <div class="form-row">
+        <label class="form-label">Gemini API Key</label>
+        <div class="gemini-key-row">
+          <input type="text" id="geminiKey" placeholder="AIza…" autocomplete="off">
+          <button class="btn" onclick="saveGeminiKey()">💾</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <label class="form-label">Shot Style Prompt</label>
+        <textarea id="stylePrompt" style="min-height:52px" placeholder="Cinematic, corporate SRE/DevOps theme, dark UI, energy infrastructure…">Cinematic dark-tech aesthetic. Subject is a senior SRE/DevOps engineer explaining enterprise AI transformation. Mix talking-head close-ups, screen recordings, and FLUX-generated B-roll of data centres, energy grids, terminal sessions, and dashboard UIs. Visual pacing: punchy cuts aligned to speech rhythm.</textarea>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:4px">
+        <button class="btn btn-gemini" id="geminiAllBtn" style="flex:1;justify-content:center" onclick="generateAllShots()">✨ Generate All Shots</button>
+        <button class="btn" onclick="clearAllAI()">✕</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar" id="statsBar">
+      <div class="stat"><span class="stat-val" id="statSegs">0</span><div class="stat-label">segments</div></div>
+      <div class="stat"><span class="stat-val" id="statVisuals">0</span><div class="stat-label">visuals</div></div>
+      <div class="stat"><span class="stat-val" id="statAI">0</span><div class="stat-label">AI shots</div></div>
+      <div class="stat"><span class="stat-val" id="statSeps">0</span><div class="stat-label">separators</div></div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-title" style="margin-bottom:8px">Obsidian Preview</div>
+      <div class="obsidian-export-preview" id="obsidianPreview">No segments yet…</div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="main-toolbar">
+      <div class="view-label">SEGMENTS</div>
+      <div class="toolbar-sep"></div>
+      <div class="toolbar-group">
+        <button class="btn" onclick="addManualSegment()">+ Add Segment</button>
+        <button class="btn" onclick="addSeparator()">── Add Separator</button>
+      </div>
+      <div class="toolbar-sep"></div>
+      <div class="toolbar-group">
+        <button class="btn" onclick="collapseAll()">⊖ Collapse All</button>
+        <button class="btn" onclick="expandAll()">⊕ Expand All</button>
+      </div>
+      <div class="toolbar-sep"></div>
+      <div class="toolbar-group">
+        <button class="btn" onclick="generateAllShots()" id="mainGeminiBtn">✨ Generate All AI Shots</button>
+      </div>
+    </div>
+
+    <div class="segments-container" id="segmentsContainer">
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🎙️</div>
+        <div class="empty-title">No segments yet</div>
+        <div class="empty-sub">Import your ElevenLabs audio, set segment length, then click <strong>Build Segments</strong> — or add segments manually.</div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Export</div>
+      <button class="btn btn-danger" onclick="closeModal()">✕ Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="export-content" id="exportContent"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="downloadExport()">⬇ Download .md</button>
+      <button class="btn btn-primary" onclick="copyExport()">📋 Copy to Clipboard</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<audio id="globalAudio" preload="metadata"></audio>
+
+<script>
+// ── STATE ──
+let segments = [];  // { id, tcIn, tcOut, transcript, type, shotDescription, visuals:[], notes, aiGenerated, collapsed }
+let separators = []; // positions between segments
+let audioFile = null;
+let audioDuration = 0;
+let segmentPlayingId = null;
+let geminiKey = localStorage.getItem('gemini_key') || '';
+let exportBuffer = '';
+let exportType = '';
+
+const audio = document.getElementById('globalAudio');
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  if (geminiKey) document.getElementById('geminiKey').value = geminiKey;
+  setupDragDrop();
+  loadFromStorage();
+});
+
+function setupDragDrop() {
+  const dz = document.getElementById('dropZone');
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault();
+    dz.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith('audio/')) handleAudioFile(f);
+  });
+}
+
+function saveGeminiKey() {
+  geminiKey = document.getElementById('geminiKey').value.trim();
+  localStorage.setItem('gemini_key', geminiKey);
+  toast('Gemini key saved ✓', 'success');
+}
+
+// ── AUDIO ──
+function handleAudioFile(file) {
+  if (!file) return;
+  audioFile = file;
+  const url = URL.createObjectURL(file);
+  audio.src = url;
+  audio.addEventListener('loadedmetadata', () => {
+    audioDuration = audio.duration;
+    document.getElementById('audioFileName').textContent = file.name;
+    document.getElementById('audioDur').textContent = fmtTime(audioDuration);
+    const segLen = +document.getElementById('segLen').value || 16;
+    const numSegs = Math.ceil(audioDuration / segLen);
+    document.getElementById('audioSegs').textContent = numSegs;
+    document.getElementById('audioVisuals').textContent = numSegs * 2 + '–' + numSegs * 4;
+    document.getElementById('audioInfo').classList.add('visible');
+    document.getElementById('miniPlayer').classList.add('visible');
+    recomputeStats();
+  }, { once: true });
+}
+
+audio.addEventListener('timeupdate', () => {
+  const pct = audioDuration ? (audio.currentTime / audioDuration * 100) : 0;
+  document.getElementById('playerFill').style.width = pct + '%';
+  document.getElementById('currentTime').textContent = fmtTime(audio.currentTime);
+  document.getElementById('totalTime').textContent = fmtTime(audioDuration);
+});
+audio.addEventListener('ended', () => {
+  document.getElementById('globalPlayBtn').textContent = '▶';
+  if (segmentPlayingId !== null) {
+    const btn = document.querySelector(`.seg-mini-play[data-id="${segmentPlayingId}"]`);
+    if (btn) { btn.textContent = '▶'; btn.classList.remove('playing'); }
+    segmentPlayingId = null;
+  }
+});
+
+function toggleGlobalPlay() {
+  if (audio.paused) { audio.play(); document.getElementById('globalPlayBtn').textContent = '⏸'; }
+  else { audio.pause(); document.getElementById('globalPlayBtn').textContent = '▶'; }
+}
+
+function seekAudio(e) {
+  const bar = e.currentTarget;
+  const pct = e.offsetX / bar.offsetWidth;
+  audio.currentTime = pct * audioDuration;
+}
+
+function playSegmentAudio(id) {
+  const seg = segments.find(s => s.id === id);
+  if (!seg || !audioFile) { toast('No audio loaded', 'error'); return; }
+  // stop any playing
+  if (segmentPlayingId !== null) {
+    const prev = document.querySelector(`.seg-mini-play[data-id="${segmentPlayingId}"]`);
+    if (prev) { prev.textContent = '▶'; prev.classList.remove('playing'); }
+  }
+  if (segmentPlayingId === id) {
+    audio.pause();
+    segmentPlayingId = null;
+    return;
+  }
+  audio.currentTime = seg.tcInSec;
+  audio.play();
+  segmentPlayingId = id;
+  const btn = document.querySelector(`.seg-mini-play[data-id="${id}"]`);
+  if (btn) { btn.textContent = '⏸'; btn.classList.add('playing'); }
+  document.getElementById('globalPlayBtn').textContent = '⏸';
+  // auto stop at segment end
+  const checkEnd = () => {
+    if (audio.currentTime >= seg.tcOutSec) {
+      audio.pause();
+      if (btn) { btn.textContent = '▶'; btn.classList.remove('playing'); }
+      segmentPlayingId = null;
+      audio.removeEventListener('timeupdate', checkEnd);
+    }
+  };
+  audio.addEventListener('timeupdate', checkEnd);
+}
+
+// ── SEGMENTS ──
+function buildSegments() {
+  const segLen = +document.getElementById('segLen').value || 16;
+  const transcript = document.getElementById('transcriptInput').value.trim();
+  const words = transcript ? splitTranscriptToSegments(transcript, segLen, audioDuration || segLen * 10) : [];
+
+  segments = [];
+  const totalDur = audioDuration || (segLen * 10);
+  const count = Math.ceil(totalDur / segLen);
+
+  for (let i = 0; i < count; i++) {
+    const tcInSec = i * segLen;
+    const tcOutSec = Math.min((i + 1) * segLen, totalDur);
+    segments.push({
+      id: 'seg_' + Date.now() + '_' + i,
+      index: i + 1,
+      tcInSec,
+      tcOutSec,
+      tcIn: fmtTC(tcInSec),
+      tcOut: fmtTC(tcOutSec),
+      transcript: words[i] || '',
+      shotType: 'b-roll',
+      shotDescription: '',
+      aiGenerated: false,
+      visuals: [],
+      notes: '',
+      collapsed: false,
+      hasSeparatorBefore: false,
+      separatorLabel: ''
+    });
+  }
+
+  renderSegments();
+  recomputeStats();
+  updateObsidianPreview();
+  saveToStorage();
+  toast(`Built ${count} segments ✓`, 'success');
+}
+
+function splitTranscriptToSegments(text, segLen, totalDur) {
+  const words = text.split(/\s+/).filter(Boolean);
+  const count = Math.ceil(totalDur / segLen);
+  const chunkSize = Math.ceil(words.length / count);
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    result.push(words.slice(i * chunkSize, (i + 1) * chunkSize).join(' '));
+  }
+  return result;
+}
+
+function addManualSegment() {
+  const last = segments[segments.length - 1];
+  const startSec = last ? last.tcOutSec : 0;
+  const segLen = +document.getElementById('segLen').value || 16;
+  const endSec = startSec + segLen;
+  const seg = {
+    id: 'seg_' + Date.now(),
+    index: segments.length + 1,
+    tcInSec: startSec,
+    tcOutSec: endSec,
+    tcIn: fmtTC(startSec),
+    tcOut: fmtTC(endSec),
+    transcript: '',
+    shotType: 'b-roll',
+    shotDescription: '',
+    aiGenerated: false,
+    visuals: [],
+    notes: '',
+    collapsed: false,
+    hasSeparatorBefore: false,
+    separatorLabel: ''
+  };
+  segments.push(seg);
+  renderSegments();
+  recomputeStats();
+  saveToStorage();
+}
+
+function addSeparator() {
+  // adds a separator before the next segment that will be added, or at end
+  if (segments.length === 0) { toast('Add at least one segment first', 'error'); return; }
+  const label = prompt('Separator label (e.g. SCENE CHANGE / ACT 2):', 'SCENE BREAK') || 'SECTION';
+  const lastSeg = segments[segments.length - 1];
+  addManualSegment();
+  const newSeg = segments[segments.length - 1];
+  newSeg.hasSeparatorBefore = true;
+  newSeg.separatorLabel = label;
+  renderSegments();
+  recomputeStats();
+  saveToStorage();
+}
+
+function addSeparatorBetween(afterId) {
+  const label = prompt('Separator label:', 'SCENE BREAK') || 'SECTION';
+  const idx = segments.findIndex(s => s.id === afterId);
+  if (idx === -1) return;
+  const nextIdx = idx + 1;
+  if (nextIdx < segments.length) {
+    segments[nextIdx].hasSeparatorBefore = true;
+    segments[nextIdx].separatorLabel = label;
+  } else {
+    // add to last
+    segments[idx].hasSeparatorAfter = true;
+    segments[idx].separatorAfterLabel = label;
+  }
+  renderSegments();
+  recomputeStats();
+  saveToStorage();
+}
+
+function removeSegment(id) {
+  segments = segments.filter(s => s.id !== id);
+  segments.forEach((s, i) => s.index = i + 1);
+  renderSegments();
+  recomputeStats();
+  saveToStorage();
+}
+
+// ── VISUALS ──
+function addVisual(segId) {
+  const seg = segments.find(s => s.id === segId);
+  if (!seg) return;
+  seg.visuals.push({ id: 'vis_' + Date.now(), type: 'b-roll', notes: '', imageSrc: null });
+  renderSegments();
+  saveToStorage();
+}
+
+function removeVisual(segId, visId) {
+  const seg = segments.find(s => s.id === segId);
+  if (!seg) return;
+  seg.visuals = seg.visuals.filter(v => v.id !== visId);
+  renderSegments();
+  saveToStorage();
+}
+
+function setVisualType(segId, visId, type) {
+  const seg = segments.find(s => s.id === segId);
+  if (!seg) return;
+  const vis = seg.visuals.find(v => v.id === visId);
+  if (!vis) return;
+  vis.type = type;
+  renderSegments();
+  saveToStorage();
+}
+
+function handleVisualImage(segId, visId, file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const seg = segments.find(s => s.id === segId);
+    if (!seg) return;
+    const vis = seg.visuals.find(v => v.id === visId);
+    if (!vis) return;
+    vis.imageSrc = e.target.result;
+    renderSegments();
+    saveToStorage();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── AI SHOT GENERATION ──
+async function generateShotForSegment(segId) {
+  const seg = segments.find(s => s.id === segId);
+  if (!seg) return;
+  const key = geminiKey || document.getElementById('geminiKey').value.trim();
+  if (!key) { toast('Enter your Gemini API key first', 'error'); return; }
+
+  const style = document.getElementById('stylePrompt').value.trim();
+  const project = document.getElementById('projectTitle').value.trim() || 'Video project';
+  const prompt = `You are a video post-production shot designer. Generate a concise shot list description for this 16-second audio segment.
+
+Project: ${project}
+Timecode: ${seg.tcIn} → ${seg.tcOut}
+Transcript: "${seg.transcript || '(no transcript)'}"
+Visual style: ${style}
+
+Respond with 2-4 shot descriptions. Format:
+SHOT 1: [type] – [description]
+SHOT 2: [type] – [description]
+...
+Keep each description under 20 words. Focus on what to show on screen.`;
+
+  seg.aiLoading = true;
+  renderSegments();
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    seg.shotDescription = text.trim();
+    seg.aiGenerated = true;
+  } catch (err) {
+    seg.shotDescription = `[Gemini error: ${err.message}]`;
+  }
+  seg.aiLoading = false;
+  renderSegments();
+  recomputeStats();
+  updateObsidianPreview();
+  saveToStorage();
+}
+
+async function generateAllShots() {
+  const key = geminiKey || document.getElementById('geminiKey').value.trim();
+  if (!key) { toast('Enter your Gemini API key first', 'error'); return; }
+  if (segments.length === 0) { toast('Build segments first', 'error'); return; }
+  document.getElementById('geminiAllBtn').classList.add('processing');
+  document.getElementById('mainGeminiBtn').classList.add('processing');
+  for (const seg of segments) {
+    await generateShotForSegment(seg.id);
+  }
+  document.getElementById('geminiAllBtn').classList.remove('processing');
+  document.getElementById('mainGeminiBtn').classList.remove('processing');
+  toast(`Generated shots for ${segments.length} segments ✓`, 'success');
+}
+
+function clearAllAI() {
+  segments.forEach(s => { s.shotDescription = ''; s.aiGenerated = false; });
+  renderSegments();
+  recomputeStats();
+  saveToStorage();
+}
+
+// ── RENDER ──
+function renderSegments() {
+  const container = document.getElementById('segmentsContainer');
+  const empty = document.getElementById('emptyState');
+
+  if (segments.length === 0) {
+    empty.style.display = 'flex';
+    container.innerHTML = '';
+    container.appendChild(empty);
+    return;
+  }
+  empty.style.display = 'none';
+
+  // Build HTML
+  let html = '';
+  segments.forEach((seg, i) => {
+    // Separator before
+    if (seg.hasSeparatorBefore) {
+      html += `<div class="separator-widget">
+        <div class="separator-line">
+          <div class="sep-hr"></div>
+          <div class="sep-label">── ${seg.separatorLabel || 'SECTION'} ──</div>
+          <div class="sep-hr"></div>
+        </div>
+      </div>`;
+    }
+
+    // Inter-segment add zone
+    if (i > 0) {
+      html += `<div class="inter-segment">
+        <div class="inter-line"></div>
+        <button class="inter-btn" onclick="addSeparatorBetween('${segments[i-1].id}')">+ separator</button>
+        <div class="inter-line"></div>
+      </div>`;
+    }
+
+    // Badges
+    let badges = '';
+    if (seg.visuals.length > 0) badges += `<span class="badge badge-img">📷 ${seg.visuals.length}</span>`;
+    if (seg.shotDescription) badges += `<span class="badge badge-shot">🎬</span>`;
+    if (seg.aiGenerated) badges += `<span class="badge badge-ai">✨ AI</span>`;
+    if (seg.hasSeparatorBefore) badges += `<span class="badge badge-sep">──</span>`;
+
+    const bodyClass = seg.collapsed ? 'seg-body collapsed' : 'seg-body';
+    const activeClass = segmentPlayingId === seg.id ? ' active' : '';
+
+    html += `<div class="segment${activeClass}" id="seg_card_${seg.id}">
+      <div class="seg-header" onclick="toggleCollapse('${seg.id}')">
+        <div class="seg-num">${seg.index}</div>
+        <div class="seg-tc">${seg.tcIn} → ${seg.tcOut}</div>
+        <div class="seg-transcript-preview">${seg.transcript || '<em style="color:var(--text-dim)">no transcript</em>'}</div>
+        <div class="seg-badges">${badges}</div>
+        <button class="seg-mini-play" data-id="${seg.id}" onclick="event.stopPropagation();playSegmentAudio('${seg.id}')">▶</button>
+        <button class="seg-collapse-btn" onclick="event.stopPropagation();toggleCollapse('${seg.id}')">${seg.collapsed ? '▼' : '▲'}</button>
+      </div>
+      <div class="${bodyClass}" id="seg_body_${seg.id}">
+
+        <!-- Transcript -->
+        <div>
+          <div class="form-label" style="margin-bottom:4px">Transcript / Narration</div>
+          <textarea class="transcript-edit" placeholder="What is being said in this segment…"
+            onchange="updateSegField('${seg.id}','transcript',this.value)"
+            oninput="updateSegField('${seg.id}','transcript',this.value)">${seg.transcript || ''}</textarea>
+        </div>
+
+        <!-- Shot Type + Timecode -->
+        <div class="shot-row">
+          <div class="form-row" style="margin:0">
+            <label class="form-label">Shot Type</label>
+            <select onchange="updateSegField('${seg.id}','shotType',this.value)">
+              <option value="b-roll" ${seg.shotType==='b-roll'?'selected':''}>B-Roll</option>
+              <option value="talking-head" ${seg.shotType==='talking-head'?'selected':''}>Talking Head</option>
+              <option value="screen-record" ${seg.shotType==='screen-record'?'selected':''}>Screen Record</option>
+              <option value="animation" ${seg.shotType==='animation'?'selected':''}>Animation</option>
+              <option value="ai-gen" ${seg.shotType==='ai-gen'?'selected':''}>AI Generated</option>
+              <option value="mixed" ${seg.shotType==='mixed'?'selected':''}>Mixed</option>
+            </select>
+          </div>
+          <div class="form-row" style="margin:0">
+            <label class="form-label">TC In</label>
+            <input type="text" value="${seg.tcIn}" onchange="updateSegTC('${seg.id}','in',this.value)" style="font-family:var(--mono);font-size:12px">
+          </div>
+          <div class="form-row" style="margin:0">
+            <label class="form-label">TC Out</label>
+            <input type="text" value="${seg.tcOut}" onchange="updateSegTC('${seg.id}','out',this.value)" style="font-family:var(--mono);font-size:12px">
+          </div>
+        </div>
+
+        <!-- AI Shot Description -->
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div class="form-label" style="margin:0">AI Shot Description</div>
+            <div style="display:flex;gap:6px">
+              ${seg.aiLoading ? '<div class="gemini-loading"><span></span><span></span><span></span></div>' : ''}
+              <button class="btn btn-gemini" style="padding:3px 10px;font-size:11px" onclick="generateShotForSegment('${seg.id}')">✨ Generate</button>
+              ${seg.shotDescription ? `<button class="btn btn-danger" style="padding:3px 8px;font-size:11px" onclick="clearSegAI('${seg.id}')">✕</button>` : ''}
+            </div>
+          </div>
+          <div class="ai-shot-box ${seg.shotDescription ? 'visible' : ''}" id="ai_box_${seg.id}">${seg.shotDescription || ''}</div>
+          ${!seg.shotDescription ? `<textarea class="transcript-edit" style="min-height:40px;font-size:11px;color:var(--text-muted)" placeholder="Manually describe the shot, or use ✨ Generate above…"
+            onchange="updateSegField('${seg.id}','shotDescription',this.value)">${seg.shotDescription||''}</textarea>` : ''}
+        </div>
+
+        <!-- Visuals -->
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div class="form-label" style="margin:0">Visual Slots <span style="color:var(--text-dim);font-weight:400">(images / screencaps)</span></div>
+            <button class="btn" style="padding:3px 10px;font-size:11px" onclick="addVisual('${seg.id}')">+ Add Visual</button>
+          </div>
+          <div class="visual-slots" id="visuals_${seg.id}">
+            ${renderVisuals(seg)}
+          </div>
+        </div>
+
+        <!-- Obsidian block preview -->
+        <div class="obsidian-block">
+          <div class="obsidian-block-title">
+            Obsidian Media Extend Block
+            <button class="obsidian-copy-btn" onclick="copyObsidianBlock('${seg.id}')">Copy</button>
+          </div>
+          <div class="obsidian-code">${buildObsidianBlock(seg)}</div>
+        </div>
+
+        <!-- Notes + Remove -->
+        <div class="seg-notes-row">
+          <input type="text" placeholder="Director's note / production note…"
+            value="${seg.notes || ''}"
+            onchange="updateSegField('${seg.id}','notes',this.value)">
+          <button class="btn btn-danger" style="padding:6px 10px" onclick="removeSegment('${seg.id}')">🗑</button>
+        </div>
+
+      </div>
+    </div>`;
+
+    // separator after (if last segment)
+    if (seg.hasSeparatorAfter) {
+      html += `<div class="separator-widget">
+        <div class="separator-line">
+          <div class="sep-hr"></div>
+          <div class="sep-label">── ${seg.separatorAfterLabel || 'END'} ──</div>
+          <div class="sep-hr"></div>
+        </div>
+      </div>`;
+    }
+  });
+
+  container.innerHTML = html;
+}
+
+function renderVisuals(seg) {
+  if (!seg.visuals.length) return `<div style="font-size:11px;color:var(--text-dim);padding:6px 0">No visuals yet — click + Add Visual</div>`;
+  return seg.visuals.map(vis => {
+    const types = ['b-roll','screen','talking','gen'];
+    const labels = { 'b-roll':'B-Roll', 'screen':'Screen Cap', 'talking':'Talking Head', 'gen':'AI Gen' };
+    const activeClasses = { 'b-roll':'active-broll', 'screen':'active-screen', 'talking':'active-talking', 'gen':'active-gen' };
+    const chips = types.map(t => `<span class="type-chip ${vis.type===t?activeClasses[t]:''}" onclick="setVisualType('${seg.id}','${vis.id}','${t}')">${labels[t]}</span>`).join('');
+    return `<div class="visual-slot">
+      <div class="visual-slot-thumb">
+        ${vis.imageSrc ? `<img src="${vis.imageSrc}" alt="visual">` : `<span class="thumb-placeholder">🖼</span>`}
+        <input type="file" accept="image/*" onchange="handleVisualImage('${seg.id}','${vis.id}',this.files[0])">
+      </div>
+      <div class="visual-slot-info">
+        <div class="visual-slot-type-row">${chips}</div>
+        <input class="visual-slot-notes" type="text" placeholder="Visual description / fal.ai prompt…"
+          value="${vis.notes || ''}"
+          onchange="updateVisualNotes('${seg.id}','${vis.id}',this.value)">
+      </div>
+      <button class="visual-slot-remove" onclick="removeVisual('${seg.id}','${vis.id}')">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// ── OBSIDIAN MARKDOWN BLOCK ──
+function buildObsidianBlock(seg) {
+  const audioFile = document.getElementById('audioFileName').textContent || 'audio.mp3';
+  let md = `![[${audioFile}#t=${seg.tcInSec},${seg.tcOutSec}]]\n`;
+  md += `> [!note]- Segment ${seg.index}: ${seg.tcIn} → ${seg.tcOut}\n`;
+  if (seg.transcript) md += `> **Narration:** ${seg.transcript}\n`;
+  if (seg.shotType) md += `> **Shot type:** ${seg.shotType}\n`;
+  if (seg.shotDescription) md += `> **Shots:**\n${seg.shotDescription.split('\n').map(l => `> ${l}`).join('\n')}\n`;
+  seg.visuals.forEach((v, i) => {
+    if (v.imageSrc) md += `> ![[visual_seg${seg.index}_${i+1}.png]]\n`;
+    if (v.notes) md += `> _Visual ${i+1}: ${v.notes}_\n`;
+  });
+  if (seg.notes) md += `> **Note:** ${seg.notes}\n`;
+  return md;
+}
+
+function copyObsidianBlock(segId) {
+  const seg = segments.find(s => s.id === segId);
+  if (!seg) return;
+  navigator.clipboard.writeText(buildObsidianBlock(seg)).then(() => toast('Obsidian block copied ✓', 'success'));
+}
+
+function updateObsidianPreview() {
+  const preview = document.getElementById('obsidianPreview');
+  if (segments.length === 0) { preview.textContent = 'No segments yet…'; return; }
+  const lines = segments.slice(0, 3).map(s => buildObsidianBlock(s)).join('\n---\n');
+  preview.textContent = lines + (segments.length > 3 ? `\n… +${segments.length-3} more segments` : '');
+}
+
+// ── EXPORT ──
+function buildShotListMD() {
+  const title = document.getElementById('projectTitle').value.trim() || 'Untitled Project';
+  const date = new Date().toISOString().slice(0,10);
+  let md = `# Shot List: ${title}\n`;
+  md += `> Generated by DeliveryPilot Shot Planner · ${date}\n\n`;
+  md += `---\n\n`;
+
+  segments.forEach(seg => {
+    if (seg.hasSeparatorBefore) {
+      md += `\n---\n## ── ${seg.separatorLabel || 'SECTION'} ──\n---\n\n`;
+    }
+    md += `### Segment ${seg.index} · \`${seg.tcIn} → ${seg.tcOut}\`\n\n`;
+    if (seg.transcript) md += `**Narration:** ${seg.transcript}\n\n`;
+    md += `**Shot Type:** ${seg.shotType}\n\n`;
+    if (seg.shotDescription) {
+      md += `**Shot Descriptions (AI):**\n\`\`\`\n${seg.shotDescription}\n\`\`\`\n\n`;
+    }
+    if (seg.visuals.length > 0) {
+      md += `**Visuals (${seg.visuals.length}):**\n`;
+      seg.visuals.forEach((v, i) => {
+        md += `- Visual ${i+1} [${v.type}]${v.notes ? ': ' + v.notes : ''}\n`;
+      });
+      md += '\n';
+    }
+    if (seg.notes) md += `**Note:** ${seg.notes}\n\n`;
+    md += `---\n\n`;
+  });
+  return md;
+}
+
+function buildObsidianFull() {
+  const title = document.getElementById('projectTitle').value.trim() || 'Untitled Project';
+  const fname = document.getElementById('audioFileName').textContent || 'audio.mp3';
+  let md = `# ${title} – Production Notes\n\n`;
+  md += `## Audio Source\n![[${fname}]]\n\n`;
+  md += `---\n\n`;
+
+  segments.forEach(seg => {
+    if (seg.hasSeparatorBefore) {
+      md += `\n---\n## ${seg.separatorLabel || 'SECTION'}\n\n`;
+    }
+    md += buildObsidianBlock(seg) + '\n';
+  });
+  return md;
+}
+
+function openExportModal(type) {
+  exportType = type;
+  const modal = document.getElementById('modalOverlay');
+  const title = document.getElementById('modalTitle');
+  const content = document.getElementById('exportContent');
+  if (type === 'shotlist') {
+    title.textContent = '🎬 Shot List Export (Markdown)';
+    exportBuffer = buildShotListMD();
+  } else {
+    title.textContent = '📋 Obsidian Note (Media Extend)';
+    exportBuffer = buildObsidianFull();
+  }
+  content.textContent = exportBuffer;
+  modal.classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function copyExport() {
+  navigator.clipboard.writeText(exportBuffer).then(() => toast('Copied to clipboard ✓', 'success'));
+}
+
+function downloadExport() {
+  const title = (document.getElementById('projectTitle').value.trim() || 'shotlist').replace(/\s+/g,'-').toLowerCase();
+  const fname = exportType === 'shotlist' ? `${title}-shotlist.md` : `${title}-obsidian.md`;
+  const blob = new Blob([exportBuffer], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = fname;
+  a.click();
+}
+
+// ── SEGMENT FIELD UPDATES ──
+function updateSegField(id, field, value) {
+  const seg = segments.find(s => s.id === id);
+  if (!seg) return;
+  seg[field] = value;
+  updateObsidianPreview();
+  saveToStorage();
+}
+
+function updateSegTC(id, which, value) {
+  const seg = segments.find(s => s.id === id);
+  if (!seg) return;
+  if (which === 'in') { seg.tcIn = value; seg.tcInSec = tcToSec(value); }
+  else { seg.tcOut = value; seg.tcOutSec = tcToSec(value); }
+  saveToStorage();
+}
+
+function updateVisualNotes(segId, visId, value) {
+  const seg = segments.find(s => s.id === segId);
+  if (!seg) return;
+  const vis = seg.visuals.find(v => v.id === visId);
+  if (!vis) return;
+  vis.notes = value;
+  saveToStorage();
+}
+
+function clearSegAI(id) {
+  const seg = segments.find(s => s.id === id);
+  if (!seg) return;
+  seg.shotDescription = '';
+  seg.aiGenerated = false;
+  renderSegments();
+  recomputeStats();
+  saveToStorage();
+}
+
+function toggleCollapse(id) {
+  const seg = segments.find(s => s.id === id);
+  if (!seg) return;
+  seg.collapsed = !seg.collapsed;
+  renderSegments();
+}
+
+function collapseAll() {
+  segments.forEach(s => s.collapsed = true);
+  renderSegments();
+}
+
+function expandAll() {
+  segments.forEach(s => s.collapsed = false);
+  renderSegments();
+}
+
+function clearAll() {
+  if (!confirm('Clear all segments?')) return;
+  segments = [];
+  renderSegments();
+  recomputeStats();
+  updateObsidianPreview();
+  saveToStorage();
+}
+
+// ── STATS ──
+function recomputeStats() {
+  const segLen = +document.getElementById('segLen').value || 16;
+  document.getElementById('statSegs').textContent = segments.length;
+  document.getElementById('statVisuals').textContent = segments.reduce((a,s) => a + s.visuals.length, 0);
+  document.getElementById('statAI').textContent = segments.filter(s => s.aiGenerated).length;
+  document.getElementById('statSeps').textContent = segments.filter(s => s.hasSeparatorBefore).length;
+
+  if (audioDuration) {
+    const numSegs = Math.ceil(audioDuration / segLen);
+    document.getElementById('audioSegs').textContent = numSegs;
+    document.getElementById('audioVisuals').textContent = numSegs * 2 + '–' + numSegs * 4;
+  }
+}
+
+// ── STORAGE ──
+function saveToStorage() {
+  try {
+    const data = { segments, projectTitle: document.getElementById('projectTitle').value };
+    localStorage.setItem('dp_shotplanner', JSON.stringify(data));
+  } catch(e) {}
+}
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem('dp_shotplanner');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (data.projectTitle) document.getElementById('projectTitle').value = data.projectTitle;
+    if (data.segments && data.segments.length > 0) {
+      segments = data.segments;
+      // strip stored image data for perf (re-upload needed)
+      renderSegments();
+      recomputeStats();
+      updateObsidianPreview();
+    }
+  } catch(e) {}
+}
+
+// ── UTILS ──
+function fmtTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+function fmtTC(sec) {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = Math.floor(sec % 60);
+  const f = Math.floor((sec % 1) * 24);
+  return [h,m,s,f].map(n => n.toString().padStart(2,'0')).join(':');
+}
+
+function tcToSec(tc) {
+  const parts = tc.split(':').map(Number);
+  if (parts.length === 4) return parts[0]*3600 + parts[1]*60 + parts[2] + parts[3]/24;
+  if (parts.length === 3) return parts[0]*3600 + parts[1]*60 + parts[2];
+  return 0;
+}
+
+function toast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `show ${type}`;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.className = '', 3000);
+}
+</script>
+</body>
+</html>
